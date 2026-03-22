@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="三国杀·萎乐全形态        * {       box-sizing: border-box;     }     body {       font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Microsoft YaHei&#39;, sans-serif;       background: #1a2a1a;       text-align: center">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-22T12:51:50.245Z">
-<meta property="article:modified_time" content="2026-03-22T12:51:50.245Z">
+<meta property="article:published_time" content="2026-03-22T12:57:57.525Z">
+<meta property="article:modified_time" content="2026-03-22T12:57:57.525Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -965,23 +965,55 @@
         <div class="hero-hp">❤️ ${hero.maxHp}</div>
         <div class="hero-skill">${hero.skillDesc}</div>
       `;
-      cardDiv.onclick = () => {
-        let game = new Game();
-        game.startGame(hero, heroes.weile_basic); // AI暂时用基础武将
-        document.getElementById('heroSelector').style.display = 'none';
-        document.getElementById('gamePanel').style.display = 'block';
-        window.currentGame = game;
-      };
-      container.appendChild(cardDiv);
-    }
-  }
+cardDiv.onclick = () => {
+  // 获取所有需要的 DOM 元素
+  const logDiv = document.getElementById('log');
+  const playerHandDiv = document.getElementById('playerHand');
+  const aiHandCountSpan = document.getElementById('aiHandCount');
+  const playerHpSpan = document.getElementById('playerHp');
+  const aiHpSpan = document.getElementById('aiHp');
+  const playerMaxHpSpan = document.getElementById('playerMaxHp');
+  const aiMaxHpSpan = document.getElementById('aiMaxHp');
+  const playerNameSpan = document.getElementById('playerName');
+  const aiNameSpan = document.getElementById('aiName');
+  const turnIndicator = document.getElementById('turnIndicator');
+  const endTurnBtn = document.getElementById('endTurnBtn');
+  const skillButtonsDiv = document.getElementById('skillButtons');
+  const playerMarkerInfo = document.getElementById('playerMarkerInfo');
+  const aiMarkerInfo = document.getElementById('aiMarkerInfo');
 
-  window.onload = () => {
-    buildHeroSelector();
-    document.getElementById('restartBtn').onclick = () => {
-      document.getElementById('heroSelector').style.display = 'block';
-      document.getElementById('gamePanel').style.display = 'none';
-    };
+  // 创建游戏实例并绑定 UI 元素
+  const game = new Game();
+  game.logDiv = logDiv;
+  game.playerHandDiv = playerHandDiv;
+  game.aiHandCountSpan = aiHandCountSpan;
+  game.playerHpSpan = playerHpSpan;
+  game.aiHpSpan = aiHpSpan;
+  game.playerMaxHpSpan = playerMaxHpSpan;
+  game.aiMaxHpSpan = aiMaxHpSpan;
+  game.playerNameSpan = playerNameSpan;
+  game.aiNameSpan = aiNameSpan;
+  game.turnIndicator = turnIndicator;
+  game.endTurnBtn = endTurnBtn;
+  game.skillButtonsDiv = skillButtonsDiv;
+  game.playerMarkerInfo = playerMarkerInfo;
+  game.aiMarkerInfo = aiMarkerInfo;
+
+  // 启动游戏
+  game.startGame(hero, heroes.weile_basic); // AI 暂时用基础形态
+
+  // 显示游戏面板，隐藏选将界面
+  document.getElementById('heroSelector').style.display = 'none';
+  document.getElementById('gamePanel').style.display = 'block';
+
+  // 将游戏实例保存到全局（可选，便于调试）
+window.onload = () => {
+  buildHeroSelector();
+  document.getElementById('restartBtn').onclick = () => {
+    document.getElementById('heroSelector').style.display = 'block';
+    document.getElementById('gamePanel').style.display = 'none';
+  };
+};
     // 绑定游戏界面元素
     let game = new Game();
     game.logDiv = document.getElementById('log');
