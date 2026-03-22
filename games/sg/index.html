@@ -20,13 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fourwich.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeIn","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta property="og:type" content="website">
+    <meta name="description" content="三国杀·极简版        body {       font-family: Arial, sans-serif;       background: #2c3e2f;       text-align: center;       padding: 20px;       color: #f5f0d7;     }     .game-container {       di">
+<meta property="og:type" content="website">
 <meta property="og:title" content="四明治_fourwich.ovo">
 <meta property="og:url" content="https://fourwich.github.io/games/sg/index.html">
 <meta property="og:site_name" content="四明治_fourwich.ovo">
+<meta property="og:description" content="三国杀·极简版        body {       font-family: Arial, sans-serif;       background: #2c3e2f;       text-align: center;       padding: 20px;       color: #f5f0d7;     }     .game-container {       di">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-22T12:26:53.832Z">
-<meta property="article:modified_time" content="2026-03-22T12:26:53.832Z">
+<meta property="article:published_time" content="2026-03-22T12:39:54.389Z">
+<meta property="article:modified_time" content="2026-03-22T12:39:54.389Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -108,7 +110,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -121,6 +123,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">三国杀·极简版</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.1.</span> <span class="nav-text">AI 武将</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.2.</span> <span class="nav-text">玩家</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -174,8 +177,282 @@
       
       
       <div class="post-body">
-          <link rel="stylesheet" href="style.css">
-<script src="script.js" defer></script>
+          <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>三国杀·极简版</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #2c3e2f;
+      text-align: center;
+      padding: 20px;
+      color: #f5f0d7;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-around;
+      max-width: 800px;
+      margin: auto;
+      background: #3a5e3a;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .player-area, .ai-area {
+      background: #4a6e4a;
+      border-radius: 15px;
+      padding: 15px;
+      width: 45%;
+    }
+    .hp {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #ffd966;
+    }
+    .hand {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .card {
+      background: #f5e5b3;
+      color: #2c3e2f;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .card:hover {
+      transform: scale(1.05);
+      background: #ffd966;
+    }
+    button {
+      background: #c97e3a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled {
+      background: #888;
+      cursor: not-allowed;
+    }
+    .log {
+      margin-top: 20px;
+      background: #2e3b2e;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      height: 100px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .turn-indicator {
+      font-size: 20px;
+      margin: 10px;
+      padding: 5px;
+      background: #c97e3a;
+      display: inline-block;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>三国杀·极简版</h1>
+  <div class="game-container">
+    <div class="ai-area">
+      <h2>AI 武将</h2>
+      <div class="hp">❤️ <span id="aiHp">4</span> / 4</div>
+      <div class="hand">手牌: <span id="aiHandCount">0</span> 张</div>
+    </div>
+    <div class="player-area">
+      <h2>玩家</h2>
+      <div class="hp">❤️ <span id="playerHp">4</span> / 4</div>
+      <div class="hand" id="playerHand"></div>
+      <button id="endTurnBtn" disabled>结束回合</button>
+    </div>
+  </div>
+  <div class="turn-indicator" id="turnIndicator">玩家回合</div>
+  <div class="log" id="log"></div>
+
+  <script>
+    // 牌库
+    const cardTypes = ['sha', 'shan'];
+    const cardNames = { sha: '杀', shan: '闪' };
+
+    let player = { hp: 4, maxHp: 4, hand: [] };
+    let ai = { hp: 4, maxHp: 4, hand: [] };
+    let currentTurn = 'player'; // 'player' 或 'ai'
+    let gameOver = false;
+
+    // DOM 元素
+    const playerHpSpan = document.getElementById('playerHp');
+    const aiHpSpan = document.getElementById('aiHp');
+    const playerHandDiv = document.getElementById('playerHand');
+    const aiHandCountSpan = document.getElementById('aiHandCount');
+    const logDiv = document.getElementById('log');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const endTurnBtn = document.getElementById('endTurnBtn');
+
+    function addLog(msg) {
+      const p = document.createElement('p');
+      p.textContent = msg;
+      logDiv.appendChild(p);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    // 抽牌
+    function drawCard(character, count = 1) {
+      for (let i = 0; i < count; i++) {
+        const randomIndex = Math.floor(Math.random() * cardTypes.length);
+        const card = cardTypes[randomIndex];
+        character.hand.push(card);
+      }
+      updateUI();
+    }
+
+    // 更新UI
+    function updateUI() {
+      playerHpSpan.textContent = player.hp;
+      aiHpSpan.textContent = ai.hp;
+      aiHandCountSpan.textContent = ai.hand.length;
+
+      // 玩家手牌渲染
+      playerHandDiv.innerHTML = '';
+      player.hand.forEach((card, idx) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        cardDiv.textContent = cardNames[card];
+        cardDiv.onclick = () => useCard(idx);
+        playerHandDiv.appendChild(cardDiv);
+      });
+
+      // 回合按钮状态
+      endTurnBtn.disabled = (currentTurn !== 'player' || gameOver);
+    }
+
+    // 玩家使用手牌
+    function useCard(index) {
+      if (currentTurn !== 'player' || gameOver) {
+        addLog('现在不是你的回合！');
+        return;
+      }
+      const card = player.hand[index];
+      if (card === 'sha') {
+        // 出杀
+        player.hand.splice(index, 1);
+        addLog('你打出一张【杀】！');
+        if (ai.hand.includes('shan')) {
+          // AI 出闪
+          const shanIndex = ai.hand.indexOf('shan');
+          ai.hand.splice(shanIndex, 1);
+          addLog('AI 打出一张【闪】，化解了伤害。');
+        } else {
+          ai.hp--;
+          addLog(`AI 无闪，受到 1 点伤害！ 剩余血量 ${ai.hp}`);
+          if (ai.hp <= 0) {
+            gameOver = true;
+            addLog('🎉 恭喜！你击败了 AI，胜利！');
+            endTurnBtn.disabled = true;
+            updateUI();
+            return;
+          }
+        }
+        updateUI();
+      } else if (card === 'shan') {
+        addLog('【闪】只能在被攻击时使用，现在不能主动使用。');
+      } else {
+        addLog('无效的牌');
+      }
+      // 检查游戏是否结束
+      if (ai.hp <= 0) gameOver = true;
+      updateUI();
+    }
+
+    // AI 回合
+    function aiTurn() {
+      if (gameOver) return;
+      addLog('==== AI 回合 ====');
+      // AI 摸两张牌
+      drawCard(ai, 2);
+      addLog('AI 摸了 2 张牌。');
+
+      // AI 出杀（如果手牌有杀）
+      const shaIndex = ai.hand.indexOf('sha');
+      if (shaIndex !== -1 && !gameOver) {
+        ai.hand.splice(shaIndex, 1);
+        addLog('AI 打出一张【杀】！');
+        if (player.hand.includes('shan')) {
+          const shanIndex = player.hand.indexOf('shan');
+          player.hand.splice(shanIndex, 1);
+          addLog('你打出一张【闪】，化解了伤害。');
+        } else {
+          player.hp--;
+          addLog(`你无闪，受到 1 点伤害！ 剩余血量 ${player.hp}`);
+          if (player.hp <= 0) {
+            gameOver = true;
+            addLog('💀 你被击败了，游戏结束。');
+            updateUI();
+            return;
+          }
+        }
+        updateUI();
+      } else {
+        addLog('AI 没有杀，回合结束。');
+      }
+      // AI 回合结束，切换回玩家
+      currentTurn = 'player';
+      turnIndicator.textContent = '玩家回合';
+      // 玩家摸两张牌
+      drawCard(player, 2);
+      addLog('你的回合，摸了 2 张牌。');
+      updateUI();
+
+      if (player.hp <= 0) gameOver = true;
+      if (gameOver) endTurnBtn.disabled = true;
+    }
+
+    // 结束回合
+    function endTurn() {
+      if (currentTurn !== 'player' || gameOver) return;
+      currentTurn = 'ai';
+      turnIndicator.textContent = 'AI 回合';
+      endTurnBtn.disabled = true;
+      updateUI();
+      // 延迟 AI 操作，让动画流畅
+      setTimeout(aiTurn, 500);
+    }
+
+    // 初始化游戏
+    function initGame() {
+      player = { hp: 4, maxHp: 4, hand: [] };
+      ai = { hp: 4, maxHp: 4, hand: [] };
+      currentTurn = 'player';
+      gameOver = false;
+      logDiv.innerHTML = '';
+      addLog('游戏开始！');
+      drawCard(player, 4);
+      drawCard(ai, 4);
+      updateUI();
+      turnIndicator.textContent = '玩家回合';
+      endTurnBtn.disabled = false;
+    }
+
+    endTurnBtn.onclick = endTurn;
+    initGame();
+  </script>
+</body>
+</html>
       </div>
       
       
