@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fourwich.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeIn","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="三国杀·萎乐全形态        &#x2F;* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px;">
+    <meta name="description" content="三国杀·萎乐全形态        * { box-sizing: border-box; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: #1a2a1a;       text-align: center;       padding: 20px;       color: #">
 <meta property="og:type" content="website">
 <meta property="og:title" content="四明治_fourwich.ovo">
 <meta property="og:url" content="https://fourwich.github.io/games/sg/index.html">
 <meta property="og:site_name" content="四明治_fourwich.ovo">
-<meta property="og:description" content="三国杀·萎乐全形态        &#x2F;* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px;">
+<meta property="og:description" content="三国杀·萎乐全形态        * { box-sizing: border-box; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: #1a2a1a;       text-align: center;       padding: 20px;       color: #">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-23T12:34:13.236Z">
-<meta property="article:modified_time" content="2026-03-23T12:34:13.236Z">
+<meta property="article:published_time" content="2026-03-23T12:45:53.982Z">
+<meta property="article:modified_time" content="2026-03-23T12:45:53.982Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -184,29 +184,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>三国杀·萎乐全形态</title>
   <style>
-    /* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 */
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #1a2a1a; text-align: center; padding: 20px; color: #f5eac1; }
-    .hero-selector { background: #2a4a2a; border-radius: 20px; padding: 20px; max-width: 1200px; margin: auto; }
-    .hero-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0; }
-    .hero-card { background: #3a6e3a; border-radius: 15px; padding: 15px; width: 220px; cursor: pointer; transition: 0.2s; border: 2px solid #c97e3a; }
-    .hero-card:hover { transform: scale(1.02); background: #5a8e5a; }
-    .hero-name { font-size: 24px; font-weight: bold; margin: 5px 0; }
-    .hero-hp { font-size: 20px; color: #ffd966; }
-    .hero-skill { font-size: 13px; margin: 10px 0; background: #2e3b2e; padding: 5px; border-radius: 8px; text-align: left; max-height: 120px; overflow-y: auto; }
-    .game-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; max-width: 1200px; margin: auto; background: #2a4a2a; border-radius: 20px; padding: 20px; }
-    .player-area, .ai-area { background: #3a6e3a; border-radius: 15px; padding: 15px; width: 45%; min-width: 280px; }
-    .hp { font-size: 24px; font-weight: bold; margin: 10px 0; color: #ffd966; }
-    .hand { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 15px 0; }
-    .card { background: #f5e5b3; color: #2c3e2f; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-    .card:hover { transform: scale(1.05); background: #ffd966; }
-    button { background: #c97e3a; color: white; border: none; padding: 8px 16px; font-size: 14px; border-radius: 8px; cursor: pointer; margin: 5px; }
-    button:disabled { background: #888; cursor: not-allowed; }
-    .skill-buttons { margin: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-    .log { margin-top: 20px; background: #2e3b2e; padding: 10px; border-radius: 10px; font-size: 14px; height: 150px; overflow-y: auto; text-align: left; }
-    .turn-indicator { font-size: 20px; margin: 10px; padding: 5px; background: #c97e3a; display: inline-block; border-radius: 10px; }
-    .marker-info { font-size: 12px; background: #1e2e1e; padding: 5px; border-radius: 8px; margin-top: 5px; }
-    .restart-btn { background: #c97e3a; margin-top: 20px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a2a1a;
+      text-align: center;
+      padding: 20px;
+      color: #f5eac1;
+    }
+    .hero-selector {
+      background: #2a4a2a;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .hero-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .hero-card {
+      background: #3a6e3a;
+      border-radius: 15px;
+      padding: 15px;
+      width: 220px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid #c97e3a;
+    }
+    .hero-card:hover {
+      transform: scale(1.02);
+      background: #5a8e5a;
+    }
+    .hero-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .hero-hp {
+      font-size: 20px;
+      color: #ffd966;
+    }
+    .hero-skill {
+      font-size: 13px;
+      margin: 10px 0;
+      background: #2e3b2e;
+      padding: 5px;
+      border-radius: 8px;
+      text-align: left;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+      background: #2a4a2a;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .player-area, .ai-area {
+      background: #3a6e3a;
+      border-radius: 15px;
+      padding: 15px;
+      width: 45%;
+      min-width: 280px;
+    }
+    .hp {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #ffd966;
+    }
+    .hand {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .card {
+      background: #f5e5b3;
+      color: #2c3e2f;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .card:hover {
+      transform: scale(1.05);
+      background: #ffd966;
+    }
+    button {
+      background: #c97e3a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:disabled {
+      background: #888;
+      cursor: not-allowed;
+    }
+    .skill-buttons {
+      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .log {
+      margin-top: 20px;
+      background: #2e3b2e;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      height: 150px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .turn-indicator {
+      font-size: 20px;
+      margin: 10px;
+      padding: 5px;
+      background: #c97e3a;
+      display: inline-block;
+      border-radius: 10px;
+    }
+    .marker-info {
+      font-size: 12px;
+      background: #1e2e1e;
+      padding: 5px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    .skill-description {
+      margin-top: 20px;
+      background: #2e3b2e;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 14px;
+      border-left: 4px solid #c97e3a;
+    }
+    .restart-btn {
+      background: #c97e3a;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -235,6 +370,7 @@
     </div>
     <div class="turn-indicator" id="turnIndicator">玩家回合</div>
     <div class="log" id="log"></div>
+    <div class="skill-description" id="skillDesc">技能介绍将显示在这里</div>
     <button id="restartBtn" class="restart-btn">重新选将</button>
   </div>
 </div>
@@ -300,7 +436,7 @@
     weile_basic: {
       name: "萎乐（基础）",
       maxHp: 4,
-      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。<br>【吃肉】主动技：选择一张方片手牌，当作【桃】使用。",
+      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。\n【吃肉】主动技：选择一张方片手牌，当作【桃】使用。",
       skill: {
         activeSkills: [
           { name: "苦肉", effect: (game, self) => { game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`); self.loseHp(1); self.drawCards(2); return true; } },
@@ -323,27 +459,68 @@
     weile_jie: {
       name: "界·萎乐",
       maxHp: 12,
-      skillDesc: "【隐忍】出牌阶段未用杀，减2上限摸1牌。<br>【狂怒】任意手牌当杀，使用须失1体；体力<上限时，杀无次数距离限制。",
+      skillDesc: "【隐忍】被动：出牌阶段未用杀，减2上限摸1牌。\n【狂怒】主动：将任意手牌当【杀】使用，使用时须失去1点体力。\n【狂怒】被动：当你的当前体力值小于体力上限时，你使用【杀】无次数限制且无距离限制。",
       skill: {
         onPhaseEnd: (game, self, usedSha) => { if (!usedSha) { game.addLog(`${self.name}发动【隐忍】，减2体力上限，摸一张牌。`); self.loseMaxHp(2); self.drawCards(1); } },
-        transformToSha: (card) => ({ type: 'sha', costHp: 1 }),
+        activeSkills: [
+          { name: "狂怒·化杀", effect: (game, self) => {
+            if (self.hand.length === 0) { game.addLog("没有手牌，无法发动。"); return false; }
+            let idx = prompt(`选择一张手牌当【杀】使用（0-${self.hand.length-1}）：\n${self.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+            let cardIdx = parseInt(idx);
+            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= self.hand.length) { game.addLog("选择无效。"); return false; }
+            let card = self.hand[cardIdx];
+            self.hand.splice(cardIdx, 1);
+            game.addLog(`${self.name}发动【狂怒】，将${CARD_NAMES[card.type]}当作【杀】使用。`);
+            self.loseHp(1);
+            // 使用杀的效果
+            let target = (self === game.player) ? game.ai : game.player;
+            // 调用通用杀逻辑（直接使用 useCard 会导致递归，所以手动实现杀的效果）
+            game.addLog(`${self.name}对${target.name}使用【杀】！`);
+            let hasShan = target.hand.some(c => c.type === 'shan');
+            if (hasShan) {
+              let shanIdx = target.hand.findIndex(c => c.type === 'shan');
+              target.hand.splice(shanIdx, 1);
+              game.addLog(`${target.name}使用【闪】！`);
+            } else {
+              target.loseHp(1);
+              game.addLog(`${target.name}受到1点伤害！`);
+            }
+            return true;
+          } }
+        ],
         canUseShaUnlimited: (game, self) => self.hp < self.maxHp
       }
     },
     weile_sp: {
       name: "SP·萎乐",
       maxHp: 4,
-      skillDesc: "【同享】被动：有角色使用桃或酒时，令另一角色获同样效果，你摸一张牌。<br>【同当】造成/受到伤害时，可失1体，令一其他角色获X张牌(X=伤害+1)。<br>【伪乐】黑色手牌当乐，使用须失1体。",
+      skillDesc: "【同享】被动：当场上有角色使用【桃】或【酒】时，选择一名其他角色，令其获得此牌的同等效果，然后你摸一张牌。\n【同当】当你造成或受到伤害时，你可以失去1点体力，然后选择一名其他角色，令其本回合内获得X张牌（X为此次伤害值+1）。\n【伪乐】主动技：你可以将一张黑色手牌当【乐不思蜀】使用，使用时须失去1点体力。",
       skill: {
         onUsePeachOrWine: (game, self, target, type) => { let other = (target === game.player) ? game.ai : game.player; if(type==='tao') other.recoverHp(1); if(type==='jiu') other.addBuff('jiu',1); game.addLog(`${self.name}发动【同享】，${other.name}也获得效果。`); self.drawCards(1); },
         onDamage: (game, self, source, target, damage) => { let other = (target === game.player) ? game.ai : game.player; if(self.hp>1) { self.loseHp(1); other.drawCards(damage+1); game.addLog(`${self.name}发动【同当】，失去1体力，${other.name}获得${damage+1}张牌。`); } },
-        transformToLe: (card) => { if(card.suit === 'spade' || card.suit === 'club') return 'le'; return null; }
+        activeSkills: [
+          { name: "伪乐", effect: (game, self) => {
+            const blackCards = self.hand.filter(c => c.suit === 'spade' || c.suit === 'club');
+            if (blackCards.length === 0) { game.addLog("没有黑色手牌，无法发动。"); return false; }
+            let idx = prompt(`选择一张黑色手牌当【乐不思蜀】使用（0-${blackCards.length-1}）：\n${blackCards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+            let cardIdx = parseInt(idx);
+            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= blackCards.length) { game.addLog("选择无效。"); return false; }
+            let card = blackCards[cardIdx];
+            let actualIdx = self.hand.findIndex(c => c === card);
+            self.hand.splice(actualIdx, 1);
+            self.loseHp(1);
+            let target = (self === game.player) ? game.ai : game.player;
+            game.addLog(`${self.name}对${target.name}使用【乐不思蜀】。`);
+            target.le = true;
+            return true;
+          } }
+        ]
       }
     },
     weile_god: {
       name: "神·神萎乐",
       maxHp: 4,
-      skillDesc: "【深情】主动：弃任意牌给角色标记，对其杀无距离，额外杀次数=标记数。<br>【谎言】杀被闪时，可令响应无效，每回合2次。<br>【其实】杀造成伤害后，可移除一标记，摸2牌，此杀伤害+1。<br>【真相】觉醒技（上限6且场上有3人有标记）：减1上限，得咆哮，令所有标记角色弃牌。",
+      skillDesc: "【深情】主动技：出牌阶段限一次，你可以弃置任意张牌，令一名角色获得等量“深情”标记；你对有“深情”标记的角色使用【杀】无距离限制，且本回合可额外使用X张【杀】（X为其“深情”标记数）。\n【谎言】被动技：你使用【杀】被【闪】响应时，可令此次响应无效；每回合限触发两次。\n【其实】被动技：当你使用【杀】造成伤害后，可移除目标角色的一个“深情”标记，摸两张牌；若如此做，此【杀】伤害+1。\n【真相】觉醒技：准备阶段，若你体力上限为6且场上至少有三名角色有“深情”标记，你减1点体力上限，获得技能【咆哮】；然后你可令所有有“深情”标记的角色弃置所有牌。",
       skill: {
         activeSkills: [{
           name: "深情",
@@ -381,7 +558,7 @@
     weile_mou: {
       name: "谋·萎乐",
       maxHp: 4,
-      skillDesc: "【谋财】主动：阶段开始，弃目标X张牌（X为其体力上限），置顶，回合结束弃等量牌。<br>【害命】限定技：失1体，得等量杀和酒，本回合无限制。<br>【谋乱】受伤或造成伤害后，获得目标一张手牌。",
+      skillDesc: "【谋财】主动技：阶段开始时，你可以选择一名角色，弃置其X张牌（X为其体力上限）并将这些牌置于牌堆顶；回合结束后，你弃置等量的牌。\n【害命】限定技：你可以失去1点体力，然后获得等同于你失去体力点数的【杀】和【酒】；此回合内，你使用【杀】和【酒】无次数与距离限制。\n【谋乱】被动技：当你受到或造成伤害后，你可以获得目标角色的一张手牌。",
       skill: {
         activeSkills: [
           { name: "谋财", effect: (game, self) => { let target = prompt("目标：1-玩家，2-AI", "2") === '2' ? game.ai : game.player; let x = target.maxHp; if(target.hand.length < x) { game.addLog("手牌不足，无法发动。"); return false; } let discarded = []; for(let i=0;i<x;i++) discarded.push(target.hand.pop()); globalDeck.unshift(...discarded); game.addLog(`${self.name}发动【谋财】，弃置${target.name}的${x}张牌置于牌堆顶。`); self.pendingDiscard = x; return true; } },
@@ -393,7 +570,7 @@
     weile_shi: {
       name: "势·萎乐",
       maxHp: 4,
-      skillDesc: "【神威】有角色出杀时，判定，获得神威标记或触发效果。<br>【保乐】濒死时，消耗所有神威回复等量体力，若神威>上限则增加上限。<br>【暴怒】限定技，出牌阶段，弃X张牌（X=体力上限），判定非红桃则觉醒得咆哮，否则失败得负面效果。",
+      skillDesc: "【神威】被动：当场上有角色使用【杀】时，你可进行一次判定，获得 1 点神威标记。判定结果按优先级执行：点数相同：此【杀】伤害 + X（X 为所有角色当前体力值之和 ÷2，向下取整）；花色相同：使用者受到 2 点火焰伤害；点数为该【杀】点数的因数或倍数：此【杀】无效。\n【保乐】当你进入濒死状态时，可消耗所有神威，恢复等量体力值。若此时神威数＞你的体力上限：体力上限增加 X（X = 神威数－原体力上限），并恢复等量体力值。\n【暴怒】限定技，出牌阶段限一次。弃置 X 张牌（X 为你的当前体力上限）。若弃牌数不足 X：觉醒失败，不进行判定。若弃牌数等于 X：进行一次判定。判定牌不为红桃：觉醒成功（获得咆哮，免疫神威负面效果）；判定牌为红桃：觉醒失败（获得负面效果）。",
       skill: {
         onShaPlayed: (game, attacker, defender, card) => {
           let judgeCard = globalDeck.shift(); globalDeck.push(judgeCard);
@@ -678,6 +855,7 @@
       this.playerHpSpan = null; this.aiHpSpan = null; this.playerMaxHpSpan = null; this.aiMaxHpSpan = null;
       this.playerNameSpan = null; this.aiNameSpan = null; this.turnIndicator = null; this.endTurnBtn = null;
       this.skillButtonsDiv = null; this.playerMarkerInfo = null; this.aiMarkerInfo = null;
+      this.skillDescDiv = null;
     }
 
     initUI() {
@@ -685,6 +863,8 @@
       this.aiNameSpan.innerText = this.ai.name;
       this.playerMaxHpSpan.innerText = this.player.maxHp;
       this.aiMaxHpSpan.innerText = this.ai.maxHp;
+      // 显示技能介绍
+      this.skillDescDiv.innerHTML = `<strong>${this.player.name} 技能介绍</strong><br>${this.player.hero.skillDesc.replace(/\n/g,'<br>')}`;
       this.updateUI();
       this.buildSkillButtons();
       this.endTurnBtn.onclick = () => this.endTurn();
@@ -771,7 +951,7 @@
       let hero = heroes[key];
       let cardDiv = document.createElement('div');
       cardDiv.className = 'hero-card';
-      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc}</div>`;
+      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
       cardDiv.onclick = () => {
         const logDiv = document.getElementById('log');
         const playerHandDiv = document.getElementById('playerHand');
@@ -787,6 +967,7 @@
         const skillButtonsDiv = document.getElementById('skillButtons');
         const playerMarkerInfo = document.getElementById('playerMarkerInfo');
         const aiMarkerInfo = document.getElementById('aiMarkerInfo');
+        const skillDescDiv = document.getElementById('skillDesc');
         const currentGame = new Game();
         currentGame.logDiv = logDiv;
         currentGame.playerHandDiv = playerHandDiv;
@@ -802,6 +983,7 @@
         currentGame.skillButtonsDiv = skillButtonsDiv;
         currentGame.playerMarkerInfo = playerMarkerInfo;
         currentGame.aiMarkerInfo = aiMarkerInfo;
+        currentGame.skillDescDiv = skillDescDiv;
         currentGame.startGame(hero, heroes.weile_basic);
         document.getElementById('heroSelector').style.display = 'none';
         document.getElementById('gamePanel').style.display = 'block';
