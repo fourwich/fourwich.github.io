@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名        * { box-sizing: border-box; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: #1a2a1a;       text-align: center;       padding: 20px;       color: #f5eac">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-23T13:11:22.765Z">
-<meta property="article:modified_time" content="2026-03-23T13:11:22.765Z">
+<meta property="article:published_time" content="2026-03-23T13:21:58.949Z">
+<meta property="article:modified_time" content="2026-03-23T13:21:58.949Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -703,9 +703,12 @@
     addCardToHand(card) { this.hand.push(card); }
     discardCard(index) { if(index>=0 && index<this.hand.length) this.hand.splice(index,1); }
 
-    loseHp(amount) {
-      this.hp = Math.max(0, this.hp - amount);
-      if (this.hp <= 0) window.currentGame?.endGame(`${this.name} 死亡！`);
+loseHp(amount) {
+  this.hp = Math.max(0, this.hp - amount);
+  if (this.hp <= 0 && !this.isDying) {
+    window.currentGame?.enterDying(this);
+  }
+}
     }
     loseMaxHp(amount) { this.maxHp = Math.max(1, this.maxHp - amount); if(this.hp > this.maxHp) this.hp = this.maxHp; }
     increaseMaxHp(amount) { this.maxHp += amount; }
@@ -813,15 +816,29 @@
       }
       // 其他牌的处理（锦囊牌）
       else if (finalType === 'tao') {
-        this.hand.splice(index,1);
-        if(this.hp < this.maxHp) { this.recoverHp(1); game.addLog(`${this.name}使用【桃】，回复1点体力。`); }
-        else game.addLog("体力已满，不能使用桃。");
-        return true;
+  this.hand.splice(index,1);
+  if (this === game.dyingCharacter || (this.hp < this.maxHp && !game.dyingCharacter)) {
+    if (this.hp < this.maxHp) {
+      this.recoverHp(1);
+      game.addLog(`${this.name}使用【桃】，回复1点体力。`);
+    } else {
+      game.addLog("体力已满，不能使用桃。");
+    }
+  } else {
+    // 濒死时使用桃/酒已经在濒死流程中处理，这里防止误用
+    game.addLog("当前阶段不能使用桃。");
+  }
+  return true;
       } else if (finalType === 'jiu') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【酒】，下一张杀伤害+1。`);
-        this.buffJiu = true;
-        return true;
+  this.hand.splice(index,1);
+  if (this === game.dyingCharacter || (!game.dyingCharacter && this.hp > 0)) {
+    game.addLog(`${this.name}使用【酒】，下一张杀伤害+1。`);
+    this.buffJiu = true;
+  } else {
+    game.addLog("当前阶段不能使用酒。");
+  }
+  return true;
+}
       } else if (finalType === 'le') {
         this.hand.splice(index,1);
         game.addLog(`${this.name}对${target.name}使用【乐不思蜀】。`);
@@ -972,6 +989,8 @@
   class Game {
     constructor() {
       this.player = null; this.ai = null; this.currentTurn = 'player'; this.gameOver = false;
+      this.dyingCharacter = null;
+      this.dyingRescueCount = 0;
       this.logDiv = null; this.playerHandDiv = null; this.aiHandCountSpan = null;
       this.playerHpSpan = null; this.aiHpSpan = null; this.playerMaxHpSpan = null; this.aiMaxHpSpan = null;
       this.playerNameSpan = null; this.aiNameSpan = null; this.turnIndicator = null; this.endTurnBtn = null;
@@ -989,6 +1008,16 @@
       this.skillDescDiv.innerHTML = `<strong>${this.player.name} 技能介绍</strong><br>${this.player.hero.skillDesc.replace(/\n/g,'<br>')}`;
       this.updateUI();
       this.buildSkillButtons();
+      if (this.dyingCharacter) {
+        if (this.dyingCharacter) {
+  this.endTurnBtn.disabled = true;
+  // 也可以让所有手牌不可点击，但为了体验，已经在useCard中限制
+} else {
+  this.endTurnBtn.disabled = (this.currentTurn !== 'player' || this.gameOver);
+}
+  this.addLog("正在濒死状态，无法结束回合。");
+  return;
+}
       this.endTurnBtn.onclick = () => this.endTurn();
     }
 
@@ -1041,6 +1070,10 @@
       this.currentTurn = 'ai';
       this.turnIndicator.innerText = 'AI 回合';
       this.updateUI();
+      if (this.dyingCharacter) {
+  this.addLog("正在濒死状态，无法结束回合。");
+  return;
+}
       setTimeout(() => this.aiTurn(), 500);
     }
 
@@ -1070,7 +1103,118 @@
       this.ai.drawCards(4);
       this.updateUI();
     }
+// 濒死流程
+enterDying(character) {
+  if (this.gameOver) return;
+  this.dyingCharacter = character;
+  this.addLog(`${character.name} 进入濒死状态，需要【桃】或【酒】救回！`);
+  this.dyingRescueCount = 0; // 尝试次数
+  this.processDying();
+}
 
+processDying() {
+  const char = this.dyingCharacter;
+  if (char.hp > 0) {
+    // 已经被救活
+    this.dyingCharacter = null;
+    this.addLog(`${char.name} 被救活，脱离濒死。`);
+    return;
+  }
+  if (this.dyingRescueCount >= 3) {
+    // 无人救或三次机会用完
+    this.endGame(`${char.name} 死亡！`);
+    return;
+  }
+
+  // 当前可以施救的角色：玩家（如果濒死者不是玩家）或濒死者自己
+  const rescuers = [];
+  if (char === this.player) {
+    // 玩家濒死，只能自己救（AI不会主动救玩家，简化）
+    rescuers.push(this.player);
+  } else {
+    // AI濒死，玩家可以救
+    rescuers.push(this.player);
+  }
+
+  // 按顺序尝试施救
+  this.nextRescuer(rescuers, 0);
+}
+
+nextRescuer(rescuers, index) {
+  if (index >= rescuers.length) {
+    // 当前轮无人施救，进入下一轮机会
+    this.dyingRescueCount++;
+    this.addLog(`濒死状态持续，第 ${this.dyingRescueCount} 次机会...`);
+    this.processDying();
+    return;
+  }
+  const rescuer = rescuers[index];
+  if (rescuer === this.player) {
+    // 玩家选择是否使用桃/酒
+    const hasPeachOrWine = rescuer.hand.some(c => c.type === 'tao' || c.type === 'jiu');
+    if (!hasPeachOrWine) {
+      this.addLog(`${rescuer.name} 没有【桃】或【酒】可以救 ${this.dyingCharacter.name}。`);
+      this.nextRescuer(rescuers, index + 1);
+      return;
+    }
+    // 弹出选择框，让玩家选择使用桃还是酒（优先桃）
+    let choice = prompt(`是否使用【桃】或【酒】救 ${this.dyingCharacter.name}？\n1. 使用桃\n2. 使用酒\n0. 放弃`, "1");
+    if (choice === "1") {
+      const taoIdx = rescuer.hand.findIndex(c => c.type === 'tao');
+      if (taoIdx !== -1) {
+        rescuer.hand.splice(taoIdx, 1);
+        this.dyingCharacter.recoverHp(1);
+        this.addLog(`${rescuer.name} 使用【桃】，${this.dyingCharacter.name} 回复 1 点体力，脱离濒死。`);
+        this.dyingCharacter = null;
+        this.updateUI();
+        return;
+      } else {
+        this.addLog("没有桃，尝试使用酒。");
+      }
+    }
+    if (choice === "2") {
+      const jiuIdx = rescuer.hand.findIndex(c => c.type === 'jiu');
+      if (jiuIdx !== -1) {
+        rescuer.hand.splice(jiuIdx, 1);
+        this.dyingCharacter.recoverHp(1);
+        this.addLog(`${rescuer.name} 使用【酒】，${this.dyingCharacter.name} 回复 1 点体力，脱离濒死。`);
+        this.dyingCharacter = null;
+        this.updateUI();
+        return;
+      } else {
+        this.addLog("没有酒。");
+      }
+    }
+    // 放弃或无效选择
+    this.addLog(`${rescuer.name} 放弃救援。`);
+    this.nextRescuer(rescuers, index + 1);
+  } else {
+    // AI 濒死时，AI 自己救（简化：AI 有桃/酒就自动救）
+    const hasPeachOrWine = rescuer.hand.some(c => c.type === 'tao' || c.type === 'jiu');
+    if (hasPeachOrWine) {
+      const peachIdx = rescuer.hand.findIndex(c => c.type === 'tao');
+      if (peachIdx !== -1) {
+        rescuer.hand.splice(peachIdx, 1);
+        this.dyingCharacter.recoverHp(1);
+        this.addLog(`${rescuer.name} 使用【桃】，${this.dyingCharacter.name} 回复 1 点体力，脱离濒死。`);
+        this.dyingCharacter = null;
+        this.updateUI();
+        return;
+      }
+      const wineIdx = rescuer.hand.findIndex(c => c.type === 'jiu');
+      if (wineIdx !== -1) {
+        rescuer.hand.splice(wineIdx, 1);
+        this.dyingCharacter.recoverHp(1);
+        this.addLog(`${rescuer.name} 使用【酒】，${this.dyingCharacter.name} 回复 1 点体力，脱离濒死。`);
+        this.dyingCharacter = null;
+        this.updateUI();
+        return;
+      }
+    }
+    this.addLog(`${rescuer.name} 没有【桃】或【酒】救 ${this.dyingCharacter.name}。`);
+    this.nextRescuer(rescuers, index + 1);
+  }
+}
     endGame(msg) { this.gameOver = true; this.addLog(msg); this.endTurnBtn.disabled = true; }
   }
 
