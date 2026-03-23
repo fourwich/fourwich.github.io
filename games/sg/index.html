@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fourwich.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeIn","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="三国杀·萎乐全形态        &#x2F;* 样式与之前相同，省略以节省篇幅，请使用之前提供的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px; co">
+    <meta name="description" content="三国杀·萎乐全形态        &#x2F;* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px;">
 <meta property="og:type" content="website">
 <meta property="og:title" content="四明治_fourwich.ovo">
 <meta property="og:url" content="https://fourwich.github.io/games/sg/index.html">
 <meta property="og:site_name" content="四明治_fourwich.ovo">
-<meta property="og:description" content="三国杀·萎乐全形态        &#x2F;* 样式与之前相同，省略以节省篇幅，请使用之前提供的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px; co">
+<meta property="og:description" content="三国杀·萎乐全形态        &#x2F;* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px;">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-23T12:22:16.359Z">
-<meta property="article:modified_time" content="2026-03-23T12:22:16.359Z">
+<meta property="article:published_time" content="2026-03-23T12:34:13.236Z">
+<meta property="article:modified_time" content="2026-03-23T12:34:13.236Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -181,9 +181,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>三国杀·萎乐全形态</title>
   <style>
-    /* 样式与之前相同，省略以节省篇幅，请使用之前提供的完整样式 */
+    /* 样式保持不变，省略以节省篇幅，实际请使用之前的完整样式 */
     * { box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: #1a2a1a; text-align: center; padding: 20px; color: #f5eac1; }
     .hero-selector { background: #2a4a2a; border-radius: 20px; padding: 20px; max-width: 1200px; margin: auto; }
@@ -239,9 +240,24 @@
 </div>
 
 <script>
-  // ---------- 牌库 ----------
-  const CARD_TYPES = ['sha', 'shan', 'tao', 'jiu', 'le'];
-  const CARD_NAMES = { sha:'杀', shan:'闪', tao:'桃', jiu:'酒', le:'乐不思蜀' };
+  // ---------- 辅助函数 ----------
+  function getSuitName(suit) {
+    switch(suit) {
+      case 'heart': return '♥红桃';
+      case 'spade': return '♠黑桃';
+      case 'club': return '♣梅花';
+      case 'diamond': return '♦方片';
+      default: return '';
+    }
+  }
+
+  // ---------- 牌库定义 ----------
+  const CARD_TYPES = ['sha','shan','tao','jiu','le','bing','guo','shun','wuzhong','juedou','nanman','wanjian','wuxie','jie','wugu','taoyuan'];
+  const CARD_NAMES = {
+    sha:'杀', shan:'闪', tao:'桃', jiu:'酒', le:'乐不思蜀', bing:'兵粮寸断', guo:'过河拆桥',
+    shun:'顺手牵羊', wuzhong:'无中生有', juedou:'决斗', nanman:'南蛮入侵', wanjian:'万箭齐发',
+    wuxie:'无懈可击', jie:'借刀杀人', wugu:'五谷丰登', taoyuan:'桃园结义'
+  };
   const SUITS = ['heart','spade','club','diamond'];
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
 
@@ -250,13 +266,26 @@
     for (let suit of SUITS) {
       for (let rank of RANKS) {
         let type = 'sha';
+        // 基本牌分布（简化）
         if (suit === 'heart' && (rank === 'A' || rank === 'K')) type = 'tao';
         else if (suit === 'heart' && rank === 'Q') type = 'jiu';
         else if (suit === 'spade' && rank === 'Q') type = 'le';
+        else if (suit === 'spade' && rank === 'J') type = 'bing';
+        else if (suit === 'club' && rank === '10') type = 'guo';
+        else if (suit === 'diamond' && rank === '9') type = 'shun';
+        else if (suit === 'heart' && rank === '8') type = 'wuzhong';
+        else if (suit === 'spade' && rank === '8') type = 'juedou';
+        else if (suit === 'club' && rank === '7') type = 'nanman';
+        else if (suit === 'heart' && rank === '7') type = 'wanjian';
+        else if (suit === 'diamond' && rank === '6') type = 'wuxie';
+        else if (suit === 'spade' && rank === '6') type = 'jie';
+        else if (suit === 'heart' && rank === '5') type = 'wugu';
+        else if (suit === 'heart' && rank === '4') type = 'taoyuan';
         else if (Math.random() < 0.33) type = 'shan';
         deck.push({ type, suit, rank });
       }
     }
+    // 洗牌
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -271,12 +300,24 @@
     weile_basic: {
       name: "萎乐（基础）",
       maxHp: 4,
-      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。<br>【吃肉】转化技：可将方片手牌当【桃】。",
+      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。<br>【吃肉】主动技：选择一张方片手牌，当作【桃】使用。",
       skill: {
         activeSkills: [
-          { name: "苦肉", effect: (game, self) => { game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`); self.loseHp(1); self.drawCards(2); return true; } }
-        ],
-        transform: (card) => { if (card.suit === 'diamond') return 'tao'; return null; }
+          { name: "苦肉", effect: (game, self) => { game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`); self.loseHp(1); self.drawCards(2); return true; } },
+          { name: "吃肉", effect: (game, self) => {
+            const diamondCards = self.hand.filter(c => c.suit === 'diamond');
+            if (diamondCards.length === 0) { game.addLog("你没有方片手牌，无法发动【吃肉】。"); return false; }
+            let idxStr = prompt(`请选择要当【桃】使用的方片手牌（0-${diamondCards.length-1}）：\n${diamondCards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+            let selected = parseInt(idxStr);
+            if (isNaN(selected) || selected < 0 || selected >= diamondCards.length) { game.addLog("选择无效。"); return false; }
+            let originalCard = diamondCards[selected];
+            let actualIndex = self.hand.findIndex(c => c === originalCard);
+            self.hand.splice(actualIndex, 1);
+            if (self.hp < self.maxHp) { self.recoverHp(1); game.addLog(`${self.name}使用【桃】，回复1点体力。`); }
+            else game.addLog("体力已满，不能使用桃。");
+            return true;
+          } }
+        ]
       }
     },
     weile_jie: {
@@ -356,7 +397,7 @@
       skill: {
         onShaPlayed: (game, attacker, defender, card) => {
           let judgeCard = globalDeck.shift(); globalDeck.push(judgeCard);
-          game.addLog(`【神威】判定：${judgeCard.rank}${judgeCard.suit}，获得1点神威标记。`);
+          game.addLog(`【神威】判定：${judgeCard.rank}${getSuitName(judgeCard.suit)}，获得1点神威标记。`);
           attacker.markers = attacker.markers || {};
           attacker.markers.shenwei = (attacker.markers.shenwei || 0) + 1;
           return true;
@@ -428,35 +469,47 @@
     increaseMaxHp(amount) { this.maxHp += amount; }
     recoverHp(amount) { this.hp = Math.min(this.maxHp, this.hp + amount); }
 
+    // 简化的锦囊效果实现（仅基础逻辑，后续可扩展）
     useCard(index, target, game) {
       let card = this.hand[index];
       if (!card) return false;
       let finalType = card.type;
+      // 转化技能
       if (this.skill.transform) { let newType = this.skill.transform(card); if(newType) finalType = newType; }
       if (this.skill.transformToSha && this.skill.transformToSha(card)) { finalType = 'sha'; if(this.skill.transformToSha(card).costHp) this.loseHp(1); }
       if (this.skill.transformToLe && this.skill.transformToLe(card)) { finalType = 'le'; if(this.skill.transformToLe(card).costHp) this.loseHp(1); }
+
+      // 杀的处理（修复出杀消失bug）
       if (finalType === 'sha') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}对${target.name}使用【杀】！`);
-        if(!this.skill.canUseShaUnlimited || !this.skill.canUseShaUnlimited(game, this)) {
-          if(this.usedShaThisTurn) { game.addLog("本回合已使用过杀，无法再出。"); return false; }
-          this.usedShaThisTurn = true;
+        let canUse = true;
+        if (!this.skill.canUseShaUnlimited || !this.skill.canUseShaUnlimited(game, this)) {
+          if (this.usedShaThisTurn) { game.addLog("本回合已使用过杀，无法再出。"); return false; }
         }
+        this.hand.splice(index, 1);
+        game.addLog(`${this.name}对${target.name}使用【杀】！`);
+        if (!this.skill.canUseShaUnlimited || !this.skill.canUseShaUnlimited(game, this)) this.usedShaThisTurn = true;
         let miss = false;
         let hasShan = target.hand.some(c => c.type === 'shan');
-        if(hasShan) {
-          if(this.skill.onShaMiss && this.skill.onShaMiss(game, this, target)) miss = true;
-          else { let shanIdx = target.hand.findIndex(c => c.type === 'shan'); target.hand.splice(shanIdx,1); game.addLog(`${target.name}使用【闪】！`); miss = true; }
+        if (hasShan) {
+          if (this.skill.onShaMiss && this.skill.onShaMiss(game, this, target)) miss = true;
+          else {
+            let shanIdx = target.hand.findIndex(c => c.type === 'shan');
+            target.hand.splice(shanIdx, 1);
+            game.addLog(`${target.name}使用【闪】！`);
+            miss = true;
+          }
         }
-        if(!miss) {
+        if (!miss) {
           let damage = 1;
-          if(this.skill.onShaDamage) damage = this.skill.onShaDamage(game, this, target, damage);
+          if (this.skill.onShaDamage) damage = this.skill.onShaDamage(game, this, target, damage);
           target.loseHp(damage);
           game.addLog(`${target.name}受到${damage}点伤害！`);
-          if(this.skill.onDamage) this.skill.onDamage(game, this, target);
+          if (this.skill.onDamage) this.skill.onDamage(game, this, target);
         }
         return true;
-      } else if (finalType === 'tao') {
+      }
+      // 基本牌
+      else if (finalType === 'tao') {
         this.hand.splice(index,1);
         if(this.hp < this.maxHp) { this.recoverHp(1); game.addLog(`${this.name}使用【桃】，回复1点体力。`); }
         else game.addLog("体力已满，不能使用桃。");
@@ -470,6 +523,144 @@
         this.hand.splice(index,1);
         game.addLog(`${this.name}对${target.name}使用【乐不思蜀】。`);
         target.le = true;
+        return true;
+      }
+      // 锦囊牌（简化实现）
+      else if (finalType === 'bing') { // 兵粮寸断
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}对${target.name}使用【兵粮寸断】。`);
+        target.bing = true;
+        return true;
+      } else if (finalType === 'guo') { // 过河拆桥
+        this.hand.splice(index,1);
+        if (target.hand.length > 0) {
+          let discardIdx = 0;
+          if (target.isPlayer && game.currentTurn === 'player') {
+            let idx = prompt(`选择${target.name}的手牌：0-${target.hand.length-1}\n${target.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+            discardIdx = parseInt(idx);
+            if (isNaN(discardIdx) || discardIdx < 0 || discardIdx >= target.hand.length) discardIdx = 0;
+          }
+          let removed = target.hand.splice(discardIdx, 1)[0];
+          game.addLog(`${this.name}弃置${target.name}的${CARD_NAMES[removed.type]}。`);
+        } else game.addLog(`${target.name}没有手牌可拆。`);
+        return true;
+      } else if (finalType === 'shun') { // 顺手牵羊
+        this.hand.splice(index,1);
+        if (target.hand.length > 0) {
+          let stealIdx = 0;
+          if (target.isPlayer && game.currentTurn === 'player') {
+            let idx = prompt(`选择要顺走的牌：0-${target.hand.length-1}\n${target.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+            stealIdx = parseInt(idx);
+            if (isNaN(stealIdx) || stealIdx < 0 || stealIdx >= target.hand.length) stealIdx = 0;
+          }
+          let stolen = target.hand.splice(stealIdx, 1)[0];
+          this.hand.push(stolen);
+          game.addLog(`${this.name}获得${target.name}的${CARD_NAMES[stolen.type]}。`);
+        } else game.addLog(`${target.name}没有手牌可顺。`);
+        return true;
+      } else if (finalType === 'wuzhong') { // 无中生有
+        this.hand.splice(index,1);
+        this.drawCards(2);
+        game.addLog(`${this.name}使用【无中生有】，摸两张牌。`);
+        return true;
+      } else if (finalType === 'juedou') { // 决斗
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}对${target.name}发起【决斗】！`);
+        // 简化：轮流出杀，AI 简单判定
+        let attacker = this, defender = target;
+        let round = 0;
+        while (true) {
+          let hasSha = defender.hand.some(c => c.type === 'sha');
+          if (!hasSha) {
+            defender.loseHp(1);
+            game.addLog(`${defender.name}决斗失败，受到1点伤害。`);
+            break;
+          } else {
+            let shaIdx = defender.hand.findIndex(c => c.type === 'sha');
+            defender.hand.splice(shaIdx, 1);
+            game.addLog(`${defender.name}打出【杀】。`);
+            // 交换角色
+            [attacker, defender] = [defender, attacker];
+            round++;
+            if (round > 10) break; // 防止无限循环
+          }
+        }
+        return true;
+      } else if (finalType === 'nanman') { // 南蛮入侵
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}使用【南蛮入侵】！`);
+        let others = [this === game.player ? game.ai : game.player];
+        for (let other of others) {
+          let hasSha = other.hand.some(c => c.type === 'sha');
+          if (hasSha) {
+            let shaIdx = other.hand.findIndex(c => c.type === 'sha');
+            other.hand.splice(shaIdx, 1);
+            game.addLog(`${other.name}打出【杀】。`);
+          } else {
+            other.loseHp(1);
+            game.addLog(`${other.name}受到1点伤害。`);
+          }
+        }
+        return true;
+      } else if (finalType === 'wanjian') { // 万箭齐发
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}使用【万箭齐发】！`);
+        let others = [this === game.player ? game.ai : game.player];
+        for (let other of others) {
+          let hasShan = other.hand.some(c => c.type === 'shan');
+          if (hasShan) {
+            let shanIdx = other.hand.findIndex(c => c.type === 'shan');
+            other.hand.splice(shanIdx, 1);
+            game.addLog(`${other.name}打出【闪】。`);
+          } else {
+            other.loseHp(1);
+            game.addLog(`${other.name}受到1点伤害。`);
+          }
+        }
+        return true;
+      } else if (finalType === 'wuxie') { // 无懈可击
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}使用【无懈可击】。`);
+        // 无懈可击通常用于抵消其他锦囊，简化处理：直接记录一个全局状态，本游戏略
+        return true;
+      } else if (finalType === 'jie') { // 借刀杀人
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}对${target.name}使用【借刀杀人】。`);
+        // 简化：强制目标使用杀攻击另一角色（这里直接让目标对敌方出杀）
+        let other = (target === game.player) ? game.ai : game.player;
+        if (target.hand.some(c => c.type === 'sha')) {
+          let shaIdx = target.hand.findIndex(c => c.type === 'sha');
+          target.useCard(shaIdx, other, game);
+        } else {
+          game.addLog(`${target.name}没有杀，武器被借走（简化）。`);
+        }
+        return true;
+      } else if (finalType === 'wugu') { // 五谷丰登
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}使用【五谷丰登】。`);
+        let cards = [];
+        for (let i=0; i<2; i++) {
+          if (globalDeck.length === 0) globalDeck = buildDeck();
+          cards.push(globalDeck.shift());
+        }
+        game.addLog(`亮出牌：${cards.map(c=>CARD_NAMES[c.type]+getSuitName(c.suit)+c.rank).join('，')}`);
+        let picker = this;
+        for (let i=0; i<cards.length; i++) {
+          let idx = prompt(`选择一张牌（0-${cards.length-1}）：\n${cards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
+          let selected = parseInt(idx);
+          if (!isNaN(selected) && selected >=0 && selected < cards.length) {
+            picker.hand.push(cards[selected]);
+            game.addLog(`${picker.name}获得${CARD_NAMES[cards[selected].type]}。`);
+            cards.splice(selected,1);
+          }
+          picker = (picker === game.player) ? game.ai : game.player;
+        }
+        return true;
+      } else if (finalType === 'taoyuan') { // 桃园结义
+        this.hand.splice(index,1);
+        game.addLog(`${this.name}使用【桃园结义】，所有角色回复1点体力。`);
+        game.player.recoverHp(1);
+        game.ai.recoverHp(1);
         return true;
       } else if (finalType === 'shan') {
         game.addLog("闪不能主动使用。");
@@ -496,7 +687,6 @@
       this.aiMaxHpSpan.innerText = this.ai.maxHp;
       this.updateUI();
       this.buildSkillButtons();
-      // 关键：绑定结束回合按钮的点击事件
       this.endTurnBtn.onclick = () => this.endTurn();
     }
 
@@ -519,7 +709,8 @@
       this.player.hand.forEach((card, idx) => {
         let div = document.createElement('div');
         div.className = 'card';
-        div.textContent = `${CARD_NAMES[card.type]} ${card.suit?card.suit:''}${card.rank?card.rank:''}`;
+        let suitName = getSuitName(card.suit);
+        div.textContent = `${CARD_NAMES[card.type]} ${suitName}${card.rank}`;
         div.onclick = () => { if(this.currentTurn !== 'player' || this.gameOver) return; this.player.useCard(idx, this.ai, this); this.updateUI(); };
         this.playerHandDiv.appendChild(div);
       });
@@ -545,6 +736,7 @@
       this.addLog('==== AI 回合 ====');
       this.ai.drawCards(2);
       this.updateUI();
+      // AI 简单出牌逻辑：优先使用杀
       let shaIdx = this.ai.hand.findIndex(c => c.type === 'sha');
       if(shaIdx !== -1) this.ai.useCard(shaIdx, this.player, this);
       else this.addLog('AI 没有杀，结束回合。');
