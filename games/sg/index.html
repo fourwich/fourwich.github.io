@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"fourwich.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"giscus","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeIn","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="三国杀·萎乐全形态        &#x2F;* 样式代码 - 保持原有样式，省略重复，请使用之前提供的样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px; c">
+    <meta name="description" content="三国杀·萎乐全形态        * { box-sizing: border-box; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: #1a2a1a;       text-align: center;       padding: 20px;       color: #f5e">
 <meta property="og:type" content="website">
 <meta property="og:title" content="四明治_fourwich.ovo">
 <meta property="og:url" content="https://fourwich.github.io/games/sg/index.html">
 <meta property="og:site_name" content="四明治_fourwich.ovo">
-<meta property="og:description" content="三国杀·萎乐全形态        &#x2F;* 样式代码 - 保持原有样式，省略重复，请使用之前提供的样式 *&#x2F;     * { box-sizing: border-box; }     body { font-family: &#39;Segoe UI&#39;, sans-serif; background: #1a2a1a; text-align: center; padding: 20px; c">
+<meta property="og:description" content="三国杀·萎乐全形态        * { box-sizing: border-box; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: #1a2a1a;       text-align: center;       padding: 20px;       color: #f5e">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-23T11:46:22.198Z">
-<meta property="article:modified_time" content="2026-03-23T11:46:22.198Z">
+<meta property="article:published_time" content="2026-03-23T12:10:29.633Z">
+<meta property="article:modified_time" content="2026-03-23T12:10:29.633Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -183,29 +183,155 @@
   <meta charset="UTF-8">
   <title>三国杀·萎乐全形态</title>
   <style>
-    /* 样式代码 - 保持原有样式，省略重复，请使用之前提供的样式 */
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #1a2a1a; text-align: center; padding: 20px; color: #f5eac1; }
-    .hero-selector { background: #2a4a2a; border-radius: 20px; padding: 20px; max-width: 1200px; margin: auto; }
-    .hero-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0; }
-    .hero-card { background: #3a6e3a; border-radius: 15px; padding: 15px; width: 220px; cursor: pointer; transition: 0.2s; border: 2px solid #c97e3a; }
-    .hero-card:hover { transform: scale(1.02); background: #5a8e5a; }
-    .hero-name { font-size: 24px; font-weight: bold; margin: 5px 0; }
-    .hero-hp { font-size: 20px; color: #ffd966; }
-    .hero-skill { font-size: 13px; margin: 10px 0; background: #2e3b2e; padding: 5px; border-radius: 8px; text-align: left; max-height: 120px; overflow-y: auto; }
-    .game-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; max-width: 1200px; margin: auto; background: #2a4a2a; border-radius: 20px; padding: 20px; }
-    .player-area, .ai-area { background: #3a6e3a; border-radius: 15px; padding: 15px; width: 45%; min-width: 280px; }
-    .hp { font-size: 24px; font-weight: bold; margin: 10px 0; color: #ffd966; }
-    .hand { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 15px 0; }
-    .card { background: #f5e5b3; color: #2c3e2f; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-    .card:hover { transform: scale(1.05); background: #ffd966; }
-    button { background: #c97e3a; color: white; border: none; padding: 8px 16px; font-size: 14px; border-radius: 8px; cursor: pointer; margin: 5px; }
-    button:disabled { background: #888; cursor: not-allowed; }
-    .skill-buttons { margin: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-    .log { margin-top: 20px; background: #2e3b2e; padding: 10px; border-radius: 10px; font-size: 14px; height: 150px; overflow-y: auto; text-align: left; }
-    .turn-indicator { font-size: 20px; margin: 10px; padding: 5px; background: #c97e3a; display: inline-block; border-radius: 10px; }
-    .marker-info { font-size: 12px; background: #1e2e1e; padding: 5px; border-radius: 8px; margin-top: 5px; }
-    .restart-btn { background: #c97e3a; margin-top: 20px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a2a1a;
+      text-align: center;
+      padding: 20px;
+      color: #f5eac1;
+    }
+    .hero-selector {
+      background: #2a4a2a;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .hero-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .hero-card {
+      background: #3a6e3a;
+      border-radius: 15px;
+      padding: 15px;
+      width: 220px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid #c97e3a;
+    }
+    .hero-card:hover {
+      transform: scale(1.02);
+      background: #5a8e5a;
+    }
+    .hero-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .hero-hp {
+      font-size: 20px;
+      color: #ffd966;
+    }
+    .hero-skill {
+      font-size: 13px;
+      margin: 10px 0;
+      background: #2e3b2e;
+      padding: 5px;
+      border-radius: 8px;
+      text-align: left;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .game-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+      background: #2a4a2a;
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .player-area, .ai-area {
+      background: #3a6e3a;
+      border-radius: 15px;
+      padding: 15px;
+      width: 45%;
+      min-width: 280px;
+    }
+    .hp {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #ffd966;
+    }
+    .hand {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .card {
+      background: #f5e5b3;
+      color: #2c3e2f;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .card:hover {
+      transform: scale(1.05);
+      background: #ffd966;
+    }
+    button {
+      background: #c97e3a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:disabled {
+      background: #888;
+      cursor: not-allowed;
+    }
+    .skill-buttons {
+      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .log {
+      margin-top: 20px;
+      background: #2e3b2e;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      height: 150px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .turn-indicator {
+      font-size: 20px;
+      margin: 10px;
+      padding: 5px;
+      background: #c97e3a;
+      display: inline-block;
+      border-radius: 10px;
+    }
+    .marker-info {
+      font-size: 12px;
+      background: #1e2e1e;
+      padding: 5px;
+      border-radius: 8px;
+      margin-top: 5px;
+    }
+    .restart-btn {
+      background: #c97e3a;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -242,54 +368,226 @@
 </div>
 
 <script>
-  // ---------- 卡牌定义 ----------
-  const CARD_TYPES = ['sha', 'shan', 'tao', 'jiu', 'le'];
-  const CARD_NAMES = { sha:'杀', shan:'闪', tao:'桃', jiu:'酒', le:'乐不思蜀' };
-  const SUITS = ['heart','spade','club','diamond'];
-  const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  // ---------- 牌库 ----------
+  const CARD_TYPES = ['sha', 'shan']; // 先只实现杀闪，桃酒乐等后续扩展
+  const CARD_NAMES = { sha:'杀', shan:'闪' };
 
-  // 简化牌库生成（此处略，实际应与之前相同，为简洁省略）
-  let globalDeck = [];
+  // 构建牌堆（共30张，杀闪各半）
+  function buildDeck() {
+    let deck = [];
+    for (let i = 0; i < 15; i++) deck.push({ type: 'sha' });
+    for (let i = 0; i < 15; i++) deck.push({ type: 'shan' });
+    // 洗牌
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+  }
+
+  let globalDeck = buildDeck();
 
   // ---------- 武将库 ----------
   const heroes = {
     weile_basic: {
       name: "萎乐（基础）",
       maxHp: 4,
-      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。<br>【吃肉】转化技：可将方片手牌当【桃】。",
-      skill: { activeSkills: [{ name:"苦肉", cost:{hp:1}, effect:(game,self)=>{ self.loseHp(1); self.drawCards(2); return true; } }] }
+      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。",
+      skill: {
+        activeSkills: [
+          {
+            name: "苦肉",
+            effect: (game, self) => {
+              game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`);
+              self.loseHp(1);
+              self.drawCards(2);
+              return true;
+            }
+          }
+        ]
+      }
     },
-    weile_jie: {
-      name: "界·萎乐",
-      maxHp: 12,
-      skillDesc: "【隐忍】未用杀减2上限摸1牌。<br>【狂怒】任意手牌当杀，使用须失1体；当体力<上限时杀无限制。",
-      skill: { /* 简化 */ }
-    },
-    weile_sp: { name:"SP·萎乐", maxHp:4, skillDesc:"【同享】【同当】【伪乐】", skill:{} },
-    weile_god: { name:"神·神萎乐", maxHp:4, skillDesc:"【深情】【谎言】【其实】【真相】", skill:{} },
-    weile_mou: { name:"谋·萎乐", maxHp:4, skillDesc:"【谋财】【害命】【谋乱】", skill:{} },
-    weile_shi: { name:"势·萎乐", maxHp:4, skillDesc:"【神威】【保乐】【暴怒】", skill:{} }
+    // 其他武将可后续添加，这里只保留一个可玩的
+    weile_jie: { name: "界·萎乐", maxHp: 12, skillDesc: "待实现", skill: {} },
+    weile_sp: { name: "SP·萎乐", maxHp: 4, skillDesc: "待实现", skill: {} },
+    weile_god: { name: "神·神萎乐", maxHp: 4, skillDesc: "待实现", skill: {} },
+    weile_mou: { name: "谋·萎乐", maxHp: 4, skillDesc: "待实现", skill: {} },
+    weile_shi: { name: "势·萎乐", maxHp: 4, skillDesc: "待实现", skill: {} }
   };
 
   // ---------- Character 类 ----------
-  class Character { /* 内容与之前一致，为简洁省略，但必须存在 */ }
+  class Character {
+    constructor(heroData, isPlayer) {
+      this.hero = heroData;
+      this.name = heroData.name;
+      this.maxHp = heroData.maxHp;
+      this.hp = this.maxHp;
+      this.hand = [];
+      this.skill = heroData.skill || {};
+      this.isPlayer = isPlayer;
+    }
+
+    drawCards(count = 1) {
+      for (let i = 0; i < count; i++) {
+        if (globalDeck.length === 0) globalDeck = buildDeck();
+        let card = globalDeck.shift();
+        this.hand.push(card);
+      }
+    }
+
+    loseHp(amount) {
+      this.hp = Math.max(0, this.hp - amount);
+      if (this.hp <= 0) game.endGame(`${this.name} 死亡！`);
+    }
+
+    useCard(index, target, game) {
+      let card = this.hand[index];
+      if (!card) return false;
+      if (card.type === 'sha') {
+        // 出杀
+        this.hand.splice(index, 1);
+        game.addLog(`${this.name}对${target.name}使用【杀】！`);
+        let hasShan = target.hand.some(c => c.type === 'shan');
+        if (hasShan) {
+          let shanIndex = target.hand.findIndex(c => c.type === 'shan');
+          target.hand.splice(shanIndex, 1);
+          game.addLog(`${target.name}使用【闪】，化解了伤害。`);
+        } else {
+          target.loseHp(1);
+          game.addLog(`${target.name}受到1点伤害！`);
+        }
+        return true;
+      } else if (card.type === 'shan') {
+        game.addLog(`【闪】不能主动使用，只能响应【杀】。`);
+        return false;
+      }
+      return false;
+    }
+  }
 
   // ---------- Game 类 ----------
   class Game {
     constructor() {
-      this.player = null; this.ai = null; this.currentTurn = 'player'; this.gameOver = false;
-      this.logDiv = null; this.playerHandDiv = null; this.aiHandCountSpan = null;
-      this.playerHpSpan = null; this.aiHpSpan = null; this.playerMaxHpSpan = null; this.aiMaxHpSpan = null;
-      this.playerNameSpan = null; this.aiNameSpan = null; this.turnIndicator = null; this.endTurnBtn = null;
-      this.skillButtonsDiv = null; this.playerMarkerInfo = null; this.aiMarkerInfo = null;
+      this.player = null;
+      this.ai = null;
+      this.currentTurn = 'player';
+      this.gameOver = false;
+      // DOM 元素会在选将时绑定
+      this.logDiv = null;
+      this.playerHandDiv = null;
+      this.aiHandCountSpan = null;
+      this.playerHpSpan = null;
+      this.aiHpSpan = null;
+      this.playerMaxHpSpan = null;
+      this.aiMaxHpSpan = null;
+      this.playerNameSpan = null;
+      this.aiNameSpan = null;
+      this.turnIndicator = null;
+      this.endTurnBtn = null;
+      this.skillButtonsDiv = null;
+      this.playerMarkerInfo = null;
+      this.aiMarkerInfo = null;
     }
-    initUI() { /* 与之前相同，注意使用 this.xxx 属性 */ }
-    buildSkillButtons() { /* 根据 this.player.skill.activeSkills 生成按钮 */ }
-    updateUI() { /* 刷新显示 */ }
-    addLog(msg) { /* 添加日志 */ }
-    endTurn() { /* 结束回合逻辑 */ }
-    aiTurn() { /* AI 回合 */ }
-    startGame(playerHero, aiHero) { /* 初始化游戏 */ }
+
+    initUI() {
+      this.playerNameSpan.innerText = this.player.name;
+      this.aiNameSpan.innerText = this.ai.name;
+      this.playerMaxHpSpan.innerText = this.player.maxHp;
+      this.aiMaxHpSpan.innerText = this.ai.maxHp;
+      this.updateUI();
+      this.buildSkillButtons();
+    }
+
+    buildSkillButtons() {
+      this.skillButtonsDiv.innerHTML = '';
+      const skills = this.player.skill.activeSkills || [];
+      for (let sk of skills) {
+        let btn = document.createElement('button');
+        btn.textContent = sk.name;
+        btn.onclick = () => {
+          if (this.currentTurn !== 'player' || this.gameOver) return;
+          sk.effect(this, this.player);
+          this.updateUI();
+        };
+        this.skillButtonsDiv.appendChild(btn);
+      }
+    }
+
+    updateUI() {
+      this.playerHpSpan.innerText = this.player.hp;
+      this.aiHpSpan.innerText = this.ai.hp;
+      this.aiHandCountSpan.innerText = this.ai.hand.length;
+      this.playerHandDiv.innerHTML = '';
+      this.player.hand.forEach((card, idx) => {
+        let div = document.createElement('div');
+        div.className = 'card';
+        div.textContent = CARD_NAMES[card.type];
+        div.onclick = () => {
+          if (this.currentTurn !== 'player' || this.gameOver) return;
+          this.player.useCard(idx, this.ai, this);
+          this.updateUI();
+        };
+        this.playerHandDiv.appendChild(div);
+      });
+      this.playerMarkerInfo.innerText = `标记：暂无`;
+      this.aiMarkerInfo.innerText = `标记：暂无`;
+      this.endTurnBtn.disabled = (this.currentTurn !== 'player' || this.gameOver);
+    }
+
+    addLog(msg) {
+      let p = document.createElement('p');
+      p.textContent = msg;
+      this.logDiv.appendChild(p);
+      this.logDiv.scrollTop = this.logDiv.scrollHeight;
+    }
+
+    endTurn() {
+      if (this.currentTurn !== 'player') return;
+      this.currentTurn = 'ai';
+      this.turnIndicator.innerText = 'AI 回合';
+      this.updateUI();
+      setTimeout(() => this.aiTurn(), 500);
+    }
+
+    aiTurn() {
+      if (this.gameOver) return;
+      this.addLog('==== AI 回合 ====');
+      // AI 摸牌
+      this.ai.drawCards(2);
+      this.updateUI();
+      // AI 出杀（如果有）
+      let shaIndex = this.ai.hand.findIndex(c => c.type === 'sha');
+      if (shaIndex !== -1) {
+        this.ai.useCard(shaIndex, this.player, this);
+        this.updateUI();
+      } else {
+        this.addLog('AI 没有杀，结束回合。');
+      }
+      // 切换回玩家
+      this.currentTurn = 'player';
+      this.turnIndicator.innerText = '玩家回合';
+      this.player.drawCards(2);
+      this.updateUI();
+      this.endTurnBtn.disabled = false;
+    }
+
+    startGame(playerHero, aiHero) {
+      this.player = new Character(playerHero, true);
+      this.ai = new Character(aiHero, false);
+      this.currentTurn = 'player';
+      this.gameOver = false;
+      this.initUI();
+      this.addLog('游戏开始！');
+      this.player.drawCards(4);
+      this.ai.drawCards(4);
+      this.updateUI();
+    }
+
+    endGame(msg) {
+      this.gameOver = true;
+      this.addLog(msg);
+      this.endTurnBtn.disabled = true;
+    }
   }
 
   // ---------- 选将界面 ----------
@@ -301,9 +599,13 @@
       let hero = heroes[key];
       let cardDiv = document.createElement('div');
       cardDiv.className = 'hero-card';
-      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc}</div>`;
+      cardDiv.innerHTML = `
+        <div class="hero-name">${hero.name}</div>
+        <div class="hero-hp">❤️ ${hero.maxHp}</div>
+        <div class="hero-skill">${hero.skillDesc}</div>
+      `;
       cardDiv.onclick = () => {
-        // 获取所有 DOM 元素
+        // 获取 DOM 元素
         const logDiv = document.getElementById('log');
         const playerHandDiv = document.getElementById('playerHand');
         const aiHandCountSpan = document.getElementById('aiHandCount');
@@ -319,7 +621,7 @@
         const playerMarkerInfo = document.getElementById('playerMarkerInfo');
         const aiMarkerInfo = document.getElementById('aiMarkerInfo');
 
-        // 创建游戏实例并绑定 UI 元素
+        // 创建游戏实例并绑定 UI
         const currentGame = new Game();
         currentGame.logDiv = logDiv;
         currentGame.playerHandDiv = playerHandDiv;
@@ -337,11 +639,11 @@
         currentGame.aiMarkerInfo = aiMarkerInfo;
 
         // 启动游戏
-        currentGame.startGame(hero, heroes.weile_basic);
+        currentGame.startGame(hero, heroes.weile_basic); // AI 暂时用基础武将
         // 显示游戏面板，隐藏选将界面
         document.getElementById('heroSelector').style.display = 'none';
         document.getElementById('gamePanel').style.display = 'block';
-        // 保存到全局（可选）
+        // 保存到全局（便于调试）
         window.currentGame = currentGame;
       };
       container.appendChild(cardDiv);
