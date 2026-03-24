@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名        &#x2F;* 样式不变，略... 请保留原有样式 *&#x2F;     * {   box-sizing: border-box;   margin: 0;   padding: 0; }  body {   font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Microsoft YaHei&#39;, system-ui, -apple-system, Bl">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-24T12:38:16.985Z">
-<meta property="article:modified_time" content="2026-03-24T12:38:16.985Z">
+<meta property="article:published_time" content="2026-03-24T12:42:11.170Z">
+<meta property="article:modified_time" content="2026-03-24T12:42:11.170Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -1184,83 +1184,74 @@ const heroes = {
 
   // ---------- 选将界面 ----------
   function buildHeroSelector() {
-    const container = document.getElementById('heroList');
-    if (!container) return;
-    container.innerHTML = '';
-    for (let key in heroes) {
-      let hero = heroes[key];
-      let cardDiv = document.createElement('div');
-      cardDiv.className = 'hero-card';
-      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
-      cardDiv.onclick = () => {
-        const logDiv = document.getElementById('log');
-        const playerHandDiv = document.getElementById('playerHand');
-        const aiHandCountSpan = document.getElementById('aiHandCount');
-        const playerHpSpan = document.getElementById('playerHp');
-        const aiHpSpan = document.getElementById('aiHp');
-        const playerMaxHpSpan = document.getElementById('playerMaxHp');
-        const aiMaxHpSpan = document.getElementById('aiMaxHp');
-        const playerNameSpan = document.getElementById('playerName');
-        const aiNameSpan = document.getElementById('aiName');
-        const turnIndicator = document.getElementById('turnIndicator');
-        const endTurnBtn = document.getElementById('endTurnBtn');
-        const skillButtonsDiv = document.getElementById('skillButtons');
-        const playerMarkerInfo = document.getElementById('playerMarkerInfo');
-        const aiMarkerInfo = document.getElementById('aiMarkerInfo');
-        const skillDescDiv = document.getElementById('skillDesc');
-        const playerWeaponSpan = document.getElementById('playerWeapon');
-        const playerArmorSpan = document.getElementById('playerArmor');
-        const playerHorseAttackSpan = document.getElementById('playerHorseAttack');
-        const playerHorseDefenseSpan = document.getElementById('playerHorseDefense');
-        const aiWeaponSpan = document.getElementById('aiWeapon');
-        const aiArmorSpan = document.getElementById('aiArmor');
-        const aiHorseAttackSpan = document.getElementById('aiHorseAttack');
-        const aiHorseDefenseSpan = document.getElementById('aiHorseDefense');
+  const container = document.getElementById('heroList');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let key in heroes) {
+    let hero = heroes[key];
+    let cardDiv = document.createElement('div');
+    cardDiv.className = 'hero-card';
+    cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
+    cardDiv.onclick = () => {
+      // 获取所有 UI 元素
+      const logDiv = document.getElementById('log');
+      const playerHandDiv = document.getElementById('playerHand');
+      const aiHandCountSpan = document.getElementById('aiHandCount');
+      const playerHpSpan = document.getElementById('playerHp');
+      const aiHpSpan = document.getElementById('aiHp');
+      const playerMaxHpSpan = document.getElementById('playerMaxHp');
+      const aiMaxHpSpan = document.getElementById('aiMaxHp');
+      const playerNameSpan = document.getElementById('playerName');
+      const aiNameSpan = document.getElementById('aiName');
+      const turnIndicator = document.getElementById('turnIndicator');
+      const endTurnBtn = document.getElementById('endTurnBtn');
+      const skillButtonsDiv = document.getElementById('skillButtons');
+      const playerMarkerInfo = document.getElementById('playerMarkerInfo');
+      const aiMarkerInfo = document.getElementById('aiMarkerInfo');
+      const skillDescDiv = document.getElementById('skillDesc');
+      // 装备 UI 元素
+      const playerWeaponSpan = document.getElementById('playerWeapon');
+      const playerArmorSpan = document.getElementById('playerArmor');
+      const playerHorseAttackSpan = document.getElementById('playerHorseAttack');
+      const playerHorseDefenseSpan = document.getElementById('playerHorseDefense');
+      const aiWeaponSpan = document.getElementById('aiWeapon');
+      const aiArmorSpan = document.getElementById('aiArmor');
+      const aiHorseAttackSpan = document.getElementById('aiHorseAttack');
+      const aiHorseDefenseSpan = document.getElementById('aiHorseDefense');
 
-        const currentGame = new Game();
-        currentGame.logDiv = logDiv;
-        currentGame.playerHandDiv = playerHandDiv;
-        currentGame.aiHandCountSpan = aiHandCountSpan;
-        currentGame.playerHpSpan = playerHpSpan;
-        currentGame.aiHpSpan = aiHpSpan;
-        currentGame.playerMaxHpSpan = playerMaxHpSpan;
-        currentGame.aiMaxHpSpan = aiMaxHpSpan;
-        currentGame.playerNameSpan = playerNameSpan;
-        currentGame.aiNameSpan = aiNameSpan;
-        currentGame.turnIndicator = turnIndicator;
-        currentGame.endTurnBtn = endTurnBtn;
-        currentGame.skillButtonsDiv = skillButtonsDiv;
-        currentGame.playerMarkerInfo = playerMarkerInfo;
-        currentGame.aiMarkerInfo = aiMarkerInfo;
-        currentGame.skillDescDiv = skillDescDiv;
-        currentGame.playerWeaponSpan = playerWeaponSpan;
-        currentGame.playerArmorSpan = playerArmorSpan;
-        currentGame.playerHorseAttackSpan = playerHorseAttackSpan;
-        currentGame.playerHorseDefenseSpan = playerHorseDefenseSpan;
-        currentGame.aiWeaponSpan = aiWeaponSpan;
-        currentGame.aiArmorSpan = aiArmorSpan;
-        currentGame.aiHorseAttackSpan = aiHorseAttackSpan;
-        currentGame.aiHorseDefenseSpan = aiHorseDefenseSpan;
+      const currentGame = new Game();
+      currentGame.logDiv = logDiv;
+      currentGame.playerHandDiv = playerHandDiv;
+      currentGame.aiHandCountSpan = aiHandCountSpan;
+      currentGame.playerHpSpan = playerHpSpan;
+      currentGame.aiHpSpan = aiHpSpan;
+      currentGame.playerMaxHpSpan = playerMaxHpSpan;
+      currentGame.aiMaxHpSpan = aiMaxHpSpan;
+      currentGame.playerNameSpan = playerNameSpan;
+      currentGame.aiNameSpan = aiNameSpan;
+      currentGame.turnIndicator = turnIndicator;
+      currentGame.endTurnBtn = endTurnBtn;
+      currentGame.skillButtonsDiv = skillButtonsDiv;
+      currentGame.playerMarkerInfo = playerMarkerInfo;
+      currentGame.aiMarkerInfo = aiMarkerInfo;
+      currentGame.skillDescDiv = skillDescDiv;
+      currentGame.playerWeaponSpan = playerWeaponSpan;
+      currentGame.playerArmorSpan = playerArmorSpan;
+      currentGame.playerHorseAttackSpan = playerHorseAttackSpan;
+      currentGame.playerHorseDefenseSpan = playerHorseDefenseSpan;
+      currentGame.aiWeaponSpan = aiWeaponSpan;
+      currentGame.aiArmorSpan = aiArmorSpan;
+      currentGame.aiHorseAttackSpan = aiHorseAttackSpan;
+      currentGame.aiHorseDefenseSpan = aiHorseDefenseSpan;
 
-        currentGame.startGame(hero, heroes.weile_basic);
-        document.getElementById('heroSelector').style.display = 'none';
-        document.getElementById('gamePanel').style.display = 'block';
-        window.currentGame = currentGame;
-      };
-      container.appendChild(cardDiv);
-    }
-  }
-
-  window.onload = () => {
-    buildHeroSelector();
-    document.getElementById('restartBtn').onclick = () => {
-      document.getElementById('heroSelector').style.display = 'block';
-      document.getElementById('gamePanel').style.display = 'none';
+      currentGame.startGame(hero, heroes.weile_basic);
+      document.getElementById('heroSelector').style.display = 'none';
+      document.getElementById('gamePanel').style.display = 'block';
+      window.currentGame = currentGame;
     };
-  };
-  </script>
-</body>
-</html>
+    container.appendChild(cardDiv);
+  }
+}
       </div>
       
       
