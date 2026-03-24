@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名        &#x2F;* 样式不变，略... 请保留原有样式 *&#x2F;     * {   box-sizing: border-box;   margin: 0;   padding: 0; }  body {   font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Microsoft YaHei&#39;, system-ui, -apple-system, Bl">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-24T12:32:33.161Z">
-<meta property="article:modified_time" content="2026-03-24T12:32:33.161Z">
+<meta property="article:published_time" content="2026-03-24T12:38:16.985Z">
+<meta property="article:modified_time" content="2026-03-24T12:38:16.985Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -655,48 +655,83 @@ function buildDeck() {
 let globalDeck = buildDeck();
 
   // ---------- 武将库（完整形态，含主动技能） ----------
-  const heroes = {
-    weile_basic: {
-      name: "萎乐（基础）",
-      maxHp: 4,
-      skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。\n【吃肉】主动技：选择一张方片手牌，当作【桃】使用。",
-      skill: {
-        activeSkills: [
-          { name: "苦肉", effect: (game, self) => { game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`); self.loseHp(1); self.drawCards(2); return true; } },
-          { name: "吃肉", effect: (game, self) => {
+  // ---------- 武将库（完整形态，含主动技能） ----------
+const heroes = {
+  weile_basic: {
+    name: "萎乐（基础）",
+    maxHp: 4,
+    skillDesc: "【苦肉】主动技：失去1点体力，摸两张牌。\n【吃肉】主动技：选择一张方片手牌，当作【桃】使用。",
+    skill: {
+      activeSkills: [
+        {
+          name: "苦肉",
+          effect: (game, self) => {
+            game.addLog(`${self.name}发动【苦肉】，失去1点体力，摸两张牌。`);
+            self.loseHp(1);
+            self.drawCards(2);
+            return true;
+          }
+        },
+        {
+          name: "吃肉",
+          effect: (game, self) => {
             const diamondCards = self.hand.filter(c => c.suit === 'diamond');
-            if (diamondCards.length === 0) { game.addLog("你没有方片手牌，无法发动【吃肉】。"); return false; }
+            if (diamondCards.length === 0) {
+              game.addLog("你没有方片手牌，无法发动【吃肉】。");
+              return false;
+            }
             let idxStr = prompt(`请选择要当【桃】使用的方片手牌（0-${diamondCards.length-1}）：\n${diamondCards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
             let selected = parseInt(idxStr);
-            if (isNaN(selected) || selected < 0 || selected >= diamondCards.length) { game.addLog("选择无效。"); return false; }
+            if (isNaN(selected) || selected < 0 || selected >= diamondCards.length) {
+              game.addLog("选择无效。");
+              return false;
+            }
             let originalCard = diamondCards[selected];
             let actualIndex = self.hand.findIndex(c => c === originalCard);
             self.hand.splice(actualIndex, 1);
-            if (self.hp < self.maxHp) { self.recoverHp(1); game.addLog(`${self.name}使用【桃】，回复1点体力。`); }
-            else game.addLog("体力已满，不能使用桃。");
+            if (self.hp < self.maxHp) {
+              self.recoverHp(1);
+              game.addLog(`${self.name}使用【桃】，回复1点体力。`);
+            } else {
+              game.addLog("体力已满，不能使用桃。");
+            }
             return true;
-          } }
-        ]
-      }
-    },
-    weile_jie: {
-      name: "界·萎乐",
-      maxHp: 12,
-      skillDesc: "【隐忍】被动：出牌阶段未用杀，减2上限摸1牌。\n【狂怒】主动：将任意手牌当【杀】使用，使用时须失去1点体力。\n【狂怒】被动：当你的当前体力值小于体力上限时，你使用【杀】无次数限制且无距离限制。",
-      skill: {
-        onPhaseEnd: (game, self, usedSha) => { if (!usedSha) { game.addLog(`${self.name}发动【隐忍】，减2体力上限，摸一张牌。`); self.loseMaxHp(2); self.drawCards(1); } },
-        activeSkills: [
-          { name: "狂怒·化杀", effect: (game, self) => {
-            if (self.hand.length === 0) { game.addLog("没有手牌，无法发动。"); return false; }
+          }
+        }
+      ]
+    }
+  },
+  weile_jie: {
+    name: "界·萎乐",
+    maxHp: 12,
+    skillDesc: "【隐忍】被动：出牌阶段未用杀，减2上限摸1牌。\n【狂怒】主动：将任意手牌当【杀】使用，使用时须失去1点体力。\n【狂怒】被动：当你的当前体力值小于体力上限时，你使用【杀】无次数限制且无距离限制。",
+    skill: {
+      onPhaseEnd: (game, self, usedSha) => {
+        if (!usedSha) {
+          game.addLog(`${self.name}发动【隐忍】，减2体力上限，摸一张牌。`);
+          self.loseMaxHp(2);
+          self.drawCards(1);
+        }
+      },
+      activeSkills: [
+        {
+          name: "狂怒·化杀",
+          effect: (game, self) => {
+            if (self.hand.length === 0) {
+              game.addLog("没有手牌，无法发动。");
+              return false;
+            }
             let idx = prompt(`选择一张手牌当【杀】使用（0-${self.hand.length-1}）：\n${self.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
             let cardIdx = parseInt(idx);
-            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= self.hand.length) { game.addLog("选择无效。"); return false; }
+            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= self.hand.length) {
+              game.addLog("选择无效。");
+              return false;
+            }
             let card = self.hand[cardIdx];
             self.hand.splice(cardIdx, 1);
             game.addLog(`${self.name}发动【狂怒】，将${CARD_NAMES[card.type]}当作【杀】使用。`);
             self.loseHp(1);
             let target = (self === game.player) ? game.ai : game.player;
-            // 调用通用杀逻辑（直接使用 useCard 会导致递归，所以手动实现杀的效果）
             game.addLog(`${self.name}对${target.name}使用【杀】！`);
             let hasShan = target.hand.some(c => c.type === 'shan');
             if (hasShan) {
@@ -708,25 +743,47 @@ let globalDeck = buildDeck();
               game.addLog(`${target.name}受到1点伤害！`);
             }
             return true;
-          } }
-        ],
-        canUseShaUnlimited: (game, self) => self.hp < self.maxHp
-      }
-    },
-    weile_sp: {
-      name: "SP·萎乐",
-      maxHp: 4,
-      skillDesc: "【同享】被动：当场上有角色使用【桃】或【酒】时，选择一名其他角色，令其获得此牌的同等效果，然后你摸一张牌。\n【同当】当你造成或受到伤害时，你可以失去1点体力，然后选择一名其他角色，令其本回合内获得X张牌（X为此次伤害值+1）。\n【伪乐】主动技：你可以将一张黑色手牌当【乐不思蜀】使用，使用时须失去1点体力。",
-      skill: {
-        onUsePeachOrWine: (game, self, target, type) => { let other = (target === game.player) ? game.ai : game.player; if(type==='tao') other.recoverHp(1); if(type==='jiu') other.addBuff('jiu',1); game.addLog(`${self.name}发动【同享】，${other.name}也获得效果。`); self.drawCards(1); },
-        onDamage: (game, self, source, target, damage) => { let other = (target === game.player) ? game.ai : game.player; if(self.hp>1) { self.loseHp(1); other.drawCards(damage+1); game.addLog(`${self.name}发动【同当】，失去1体力，${other.name}获得${damage+1}张牌。`); } },
-        activeSkills: [
-          { name: "伪乐", effect: (game, self) => {
+          }
+        }
+      ],
+      canUseShaUnlimited: (game, self) => self.hp < self.maxHp
+    }
+  },
+  weile_sp: {
+    name: "SP·萎乐",
+    maxHp: 4,
+    skillDesc: "【同享】被动：当场上有角色使用【桃】或【酒】时，选择一名其他角色，令其获得此牌的同等效果，然后你摸一张牌。\n【同当】当你造成或受到伤害时，你可以失去1点体力，然后选择一名其他角色，令其本回合内获得X张牌（X为此次伤害值+1）。\n【伪乐】主动技：你可以将一张黑色手牌当【乐不思蜀】使用，使用时须失去1点体力。",
+    skill: {
+      onUsePeachOrWine: (game, self, target, type) => {
+        let other = (target === game.player) ? game.ai : game.player;
+        if (type === 'tao') other.recoverHp(1);
+        if (type === 'jiu') other.addBuff('jiu', 1);
+        game.addLog(`${self.name}发动【同享】，${other.name}也获得效果。`);
+        self.drawCards(1);
+      },
+      onDamage: (game, self, source, target, damage) => {
+        let other = (target === game.player) ? game.ai : game.player;
+        if (self.hp > 1) {
+          self.loseHp(1);
+          other.drawCards(damage + 1);
+          game.addLog(`${self.name}发动【同当】，失去1体力，${other.name}获得${damage+1}张牌。`);
+        }
+      },
+      activeSkills: [
+        {
+          name: "伪乐",
+          effect: (game, self) => {
             const blackCards = self.hand.filter(c => c.suit === 'spade' || c.suit === 'club');
-            if (blackCards.length === 0) { game.addLog("没有黑色手牌，无法发动。"); return false; }
+            if (blackCards.length === 0) {
+              game.addLog("没有黑色手牌，无法发动。");
+              return false;
+            }
             let idx = prompt(`选择一张黑色手牌当【乐不思蜀】使用（0-${blackCards.length-1}）：\n${blackCards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
             let cardIdx = parseInt(idx);
-            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= blackCards.length) { game.addLog("选择无效。"); return false; }
+            if (isNaN(cardIdx) || cardIdx < 0 || cardIdx >= blackCards.length) {
+              game.addLog("选择无效。");
+              return false;
+            }
             let card = blackCards[cardIdx];
             let actualIdx = self.hand.findIndex(c => c === card);
             self.hand.splice(actualIdx, 1);
@@ -735,425 +792,164 @@ let globalDeck = buildDeck();
             game.addLog(`${self.name}对${target.name}使用【乐不思蜀】。`);
             target.le = true;
             return true;
-          } }
-        ]
-      }
-    },
-    weile_god: {
-      name: "神·萎乐",
-      maxHp: 4,
-      skillDesc: "【深情】主动技：出牌阶段限一次，你可以弃置任意张牌，令一名角色获得等量“深情”标记；你对有“深情”标记的角色使用【杀】无距离限制，且本回合可额外使用X张【杀】（X为其“深情”标记数）。\n【谎言】被动技：你使用【杀】被【闪】响应时，可令此次响应无效；每回合限触发两次。\n【其实】被动技：当你使用【杀】造成伤害后，可移除目标角色的一个“深情”标记，摸两张牌；若如此做，此【杀】伤害+1。\n【真相】觉醒技：准备阶段，若你体力上限为6且场上至少有三名角色有“深情”标记，你减1点体力上限，获得技能【咆哮】；然后你可令所有有“深情”标记的角色弃置所有牌。",
-      skill: {
-        activeSkills: [{
+          }
+        }
+      ]
+    }
+  },
+  weile_god: {
+    name: "神·萎乐",
+    maxHp: 4,
+    skillDesc: "【深情】主动技：出牌阶段限一次，你可以弃置任意张牌，令一名角色获得等量“深情”标记；你对有“深情”标记的角色使用【杀】无距离限制，且本回合可额外使用X张【杀】（X为其“深情”标记数）。\n【谎言】被动技：你使用【杀】被【闪】响应时，可令此次响应无效；每回合限触发两次。\n【其实】被动技：当你使用【杀】造成伤害后，可移除目标角色的一个“深情”标记，摸两张牌；若如此做，此【杀】伤害+1。\n【真相】觉醒技：准备阶段，若你体力上限为6且场上至少有三名角色有“深情”标记，你减1点体力上限，获得技能【咆哮】；然后你可令所有有“深情”标记的角色弃置所有牌。",
+    skill: {
+      activeSkills: [
+        {
           name: "深情",
           effect: (game, self) => {
             let count = parseInt(prompt("弃置几张手牌？", "1"));
-            if (isNaN(count) || count < 1 || count > self.hand.length) { game.addLog("弃牌数量无效。"); return false; }
+            if (isNaN(count) || count < 1 || count > self.hand.length) {
+              game.addLog("弃牌数量无效。");
+              return false;
+            }
             let target = prompt("目标：1-玩家，2-AI", "1") === '2' ? game.ai : game.player;
-            for(let i=0;i<count;i++) self.discardCard(0);
+            for (let i = 0; i < count; i++) self.discardCard(0);
             target.markers = target.markers || {};
             target.markers.shenqing = (target.markers.shenqing || 0) + count;
             game.addLog(`${self.name}对${target.name}施加${count}层深情标记。`);
             return true;
           }
-        }],
-        onShaMiss: (game, self, attacker, defender) => {
-          if (self === attacker && (self.skill.liesCount || 0) < 2) {
-            self.skill.liesCount = (self.skill.liesCount || 0) + 1;
-            game.addLog(`${self.name}发动【谎言】，令杀响应无效。`);
+        }
+      ],
+      onShaMiss: (game, self, attacker, defender) => {
+        if (self === attacker && (self.skill.liesCount || 0) < 2) {
+          self.skill.liesCount = (self.skill.liesCount || 0) + 1;
+          game.addLog(`${self.name}发动【谎言】，令杀响应无效。`);
+          return true;
+        }
+        return false;
+      },
+      onShaDamage: (game, self, target, damage) => {
+        let markers = target.markers?.shenqing || 0;
+        if (markers > 0) {
+          target.markers.shenqing--;
+          self.drawCards(2);
+          game.addLog(`${self.name}发动【其实】，移除一个深情标记，摸2牌，伤害+1。`);
+          return damage + 1;
+        }
+        return damage;
+      }
+    }
+  },
+  weile_mou: {
+    name: "谋·萎乐",
+    maxHp: 4,
+    skillDesc: "【谋财】主动技：阶段开始时，你可以选择一名角色，弃置其X张牌（X为其体力上限）并将这些牌置于牌堆顶；回合结束后，你弃置等量的牌。\n【害命】限定技：你可以失去1点体力，然后获得等同于你失去体力点数的【杀】和【酒】；此回合内，你使用【杀】和【酒】无次数与距离限制。\n【谋乱】被动技：当你受到或造成伤害后，你可以获得目标角色的一张手牌。",
+    skill: {
+      activeSkills: [
+        {
+          name: "谋财",
+          effect: (game, self) => {
+            let target = prompt("目标：1-玩家，2-AI", "2") === '2' ? game.ai : game.player;
+            let x = target.maxHp;
+            if (target.hand.length < x) {
+              game.addLog("手牌不足，无法发动。");
+              return false;
+            }
+            let discarded = [];
+            for (let i = 0; i < x; i++) discarded.push(target.hand.pop());
+            globalDeck.unshift(...discarded);
+            game.addLog(`${self.name}发动【谋财】，弃置${target.name}的${x}张牌置于牌堆顶。`);
+            self.pendingDiscard = x;
             return true;
           }
-          return false;
         },
-        onShaDamage: (game, self, target, damage) => {
-          let markers = target.markers?.shenqing || 0;
-          if (markers > 0) {
-            target.markers.shenqing--;
-            self.drawCards(2);
-            game.addLog(`${self.name}发动【其实】，移除一个深情标记，摸2牌，伤害+1。`);
-            return damage + 1;
+        {
+          name: "害命",
+          limited: true,
+          effect: (game, self) => {
+            if (self.skill.haimingUsed) {
+              game.addLog("限定技已使用。");
+              return false;
+            }
+            game.addLog(`${self.name}发动【害命】，失去1点体力，获得等量杀和酒。`);
+            self.loseHp(1);
+            let count = self.lostHpThisTurn || 1;
+            for (let i = 0; i < count; i++) {
+              self.addCardToHand({ type: 'sha', suit: 'spade', rank: 'K' });
+              self.addCardToHand({ type: 'jiu', suit: 'heart', rank: 'Q' });
+            }
+            self.skill.haimingUsed = true;
+            self.skill.haimingActive = true;
+            return true;
           }
-          return damage;
+        }
+      ],
+      onDamage: (game, self, target) => {
+        if (target && target !== self && target.hand.length > 0) {
+          let card = target.hand.pop();
+          self.hand.push(card);
+          game.addLog(`${self.name}发动【谋乱】，获得${target.name}一张手牌。`);
         }
       }
-    },
-    weile_mou: {
-      name: "谋·萎乐",
-      maxHp: 4,
-      skillDesc: "【谋财】主动技：阶段开始时，你可以选择一名角色，弃置其X张牌（X为其体力上限）并将这些牌置于牌堆顶；回合结束后，你弃置等量的牌。\n【害命】限定技：你可以失去1点体力，然后获得等同于你失去体力点数的【杀】和【酒】；此回合内，你使用【杀】和【酒】无次数与距离限制。\n【谋乱】被动技：当你受到或造成伤害后，你可以获得目标角色的一张手牌。",
-      skill: {
-        activeSkills: [
-          { name: "谋财", effect: (game, self) => { let target = prompt("目标：1-玩家，2-AI", "2") === '2' ? game.ai : game.player; let x = target.maxHp; if(target.hand.length < x) { game.addLog("手牌不足，无法发动。"); return false; } let discarded = []; for(let i=0;i<x;i++) discarded.push(target.hand.pop()); globalDeck.unshift(...discarded); game.addLog(`${self.name}发动【谋财】，弃置${target.name}的${x}张牌置于牌堆顶。`); self.pendingDiscard = x; return true; } },
-          { name: "害命", limited: true, effect: (game, self) => { if(self.skill.haimingUsed) { game.addLog("限定技已使用。"); return false; } game.addLog(`${self.name}发动【害命】，失去1点体力，获得等量杀和酒。`); self.loseHp(1); let count = self.lostHpThisTurn || 1; for(let i=0;i<count;i++) { self.addCardToHand({ type:'sha', suit:'spade', rank:'K' }); self.addCardToHand({ type:'jiu', suit:'heart', rank:'Q' }); } self.skill.haimingUsed = true; self.skill.haimingActive = true; return true; } }
-        ],
-        onDamage: (game, self, target) => { if(target && target !== self && target.hand.length>0) { let card = target.hand.pop(); self.hand.push(card); game.addLog(`${self.name}发动【谋乱】，获得${target.name}一张手牌。`); } }
-      }
-    },
- weile_shi: {
-  name: "势·萎乐",
-  maxHp: 4,
-  skillDesc: "【神威】被动：当场上有角色使用【杀】时，你可进行一次判定，获得 1 点神威标记。判定结果按优先级执行：点数相同：此【杀】伤害 + X（X 为所有角色当前体力值之和 ÷2，向下取整）；花色相同：使用者受到 2 点火焰伤害；点数为该【杀】点数的因数或倍数：此【杀】无效。\n【保乐】当你进入濒死状态时，可消耗所有神威，恢复等量体力值。若此时神威数＞你的体力上限：体力上限增加 X（X = 神威数－原体力上限），并恢复等量体力值。\n【暴怒】限定技，出牌阶段限一次。弃置 X 张牌（X 为你的当前体力上限）。若弃牌数不足 X：觉醒失败，不进行判定。若弃牌数等于 X：进行一次判定。判定牌不为红桃：觉醒成功（获得咆哮，免疫神威负面效果）；判定牌为红桃：觉醒失败（获得负面效果）。",
-  skill: {
-    onShaPlayed: (game, attacker, defender, card) => {
-      let judgeCard = globalDeck.shift();
-      globalDeck.push(judgeCard);
-      let judgeInfo = `${judgeCard.rank}${getSuitName(judgeCard.suit)}`;
-      game.addLog(`【神威】判定：${judgeInfo}，获得1点神威标记。`);
-      alert(`【神威】判定牌：${judgeInfo}\n获得1点神威标记。`);
-      attacker.markers = attacker.markers || {};
-      attacker.markers.shenwei = (attacker.markers.shenwei || 0) + 1;
-      return true;
-    },
-    onDying: (game, self) => {
-      let shenwei = self.markers?.shenwei || 0;
-      if (shenwei > 0) {
-        game.addLog(`${self.name}发动【保乐】，消耗${shenwei}点神威，回复${shenwei}体力。`);
-        self.recoverHp(shenwei);
-        if (shenwei > self.maxHp) {
-          let inc = shenwei - self.maxHp;
-          self.increaseMaxHp(inc);
-          game.addLog(`体力上限增加${inc}。`);
-        }
-        self.markers.shenwei = 0;
-      }
-    },
-    activeSkills: [{
-      name: "暴怒",
-      limited: true,
-      effect: (game, self) => {
-        if (self.skill.baonuUsed) return false;
-        let x = self.maxHp;
-        if (self.hand.length < x) {
-          game.addLog("手牌不足，觉醒失败。");
-          return false;
-        }
-        for (let i = 0; i < x; i++) self.discardCard(0);
+    }
+  },
+  weile_shi: {
+    name: "势·萎乐",
+    maxHp: 4,
+    skillDesc: "【神威】被动：当场上有角色使用【杀】时，你可进行一次判定，获得 1 点神威标记。判定结果按优先级执行：点数相同：此【杀】伤害 + X（X 为所有角色当前体力值之和 ÷2，向下取整）；花色相同：使用者受到 2 点火焰伤害；点数为该【杀】点数的因数或倍数：此【杀】无效。\n【保乐】当你进入濒死状态时，可消耗所有神威，恢复等量体力值。若此时神威数＞你的体力上限：体力上限增加 X（X = 神威数－原体力上限），并恢复等量体力值。\n【暴怒】限定技，出牌阶段限一次。弃置 X 张牌（X 为你的当前体力上限）。若弃牌数不足 X：觉醒失败，不进行判定。若弃牌数等于 X：进行一次判定。判定牌不为红桃：觉醒成功（获得咆哮，免疫神威负面效果）；判定牌为红桃：觉醒失败（获得负面效果）。",
+    skill: {
+      onShaPlayed: (game, attacker, defender, card) => {
         let judgeCard = globalDeck.shift();
         globalDeck.push(judgeCard);
-        if (judgeCard.suit !== 'heart') {
-          game.addLog("觉醒成功！获得【咆哮】");
-          self.skill.raopao = true;
-        } else {
-          game.addLog("觉醒失败，获得负面效果");
-          self.skill.failEffect = true;
-        }
-        self.skill.baonuUsed = true;
+        let judgeInfo = `${judgeCard.rank}${getSuitName(judgeCard.suit)}`;
+        game.addLog(`【神威】判定：${judgeInfo}，获得1点神威标记。`);
+        alert(`【神威】判定牌：${judgeInfo}\n获得1点神威标记。`);
+        attacker.markers = attacker.markers || {};
+        attacker.markers.shenwei = (attacker.markers.shenwei || 0) + 1;
         return true;
-      }
-    }]
-  }
-}
-
-  // ---------- Character 类 ----------
-  class Character {
-    constructor(heroData, isPlayer) {
-      this.hero = heroData;
-      this.name = heroData.name;
-      this.maxHp = heroData.maxHp;
-      this.hp = this.maxHp;
-      this.hand = [];
-      this.skill = heroData.skill || {};
-      this.isPlayer = isPlayer;
-      this.markers = {};
-      this.pendingDiscard = 0;
-      this.usedShaThisTurn = false;
-      this.extraShaCount = 0;
-      // 装备
-      this.weapon = null;
-      this.armor = null;
-      this.horseAttack = null;
-      this.horseDefense = null;
-    }
-
-    drawCards(count = 1) {
-      for (let i=0; i<count; i++) {
-        if (globalDeck.length === 0) globalDeck = buildDeck();
-        this.hand.push(globalDeck.shift());
-      }
-    }
-
-    addCardToHand(card) { this.hand.push(card); }
-    discardCard(index) { if(index>=0 && index<this.hand.length) this.hand.splice(index,1); }
-
-    loseHp(amount) {
-      this.hp = Math.max(0, this.hp - amount);
-      if (this.hp <= 0 && !this.isDying) {
-        window.currentGame?.enterDying(this);
-      }
-    }
-
-    loseMaxHp(amount) { this.maxHp = Math.max(1, this.maxHp - amount); if(this.hp > this.maxHp) this.hp = this.maxHp; }
-    increaseMaxHp(amount) { this.maxHp += amount; }
-    recoverHp(amount) { this.hp = Math.min(this.maxHp, this.hp + amount); }
-
-    getAttackRange() {
-      let range = 1;
-      if (this.weapon && this.weapon.range) range = this.weapon.range;
-      return range;
-    }
-
-    getDistanceTo(target) {
-      let dist = 1; // 简化：默认相邻
-      if (this.horseAttack) dist -= this.horseAttack.rangeAdd || 0;
-      if (target.horseDefense) dist += target.horseDefense.rangeSub || 0;
-      return Math.max(1, dist);
-    }
-
-    equip(card) {
-      if (card.type === 'weapon') {
-        if (this.weapon) this.hand.push(this.weapon);
-        this.weapon = card;
-      } else if (card.type === 'armor') {
-        if (this.armor) this.hand.push(this.armor);
-        this.armor = card;
-      } else if (card.type === 'horse_attack') {
-        if (this.horseAttack) this.hand.push(this.horseAttack);
-        this.horseAttack = card;
-      } else if (card.type === 'horse_defense') {
-        if (this.horseDefense) this.hand.push(this.horseDefense);
-        this.horseDefense = card;
-      }
-      this.hand.splice(this.hand.indexOf(card), 1);
-    }
-
-    useCard(index, target, game) {
-      let card = this.hand[index];
-      if (!card) return false;
-      let finalType = card.type;
-      // 转化技能
-      if (this.skill.transform) { let newType = this.skill.transform(card); if(newType) finalType = newType; }
-      if (this.skill.transformToSha && this.skill.transformToSha(card)) { finalType = 'sha'; if(this.skill.transformToSha(card).costHp) this.loseHp(1); }
-      if (this.skill.transformToLe && this.skill.transformToLe(card)) { finalType = 'le'; if(this.skill.transformToLe(card).costHp) this.loseHp(1); }
-
-      // 装备牌
-      if (['weapon','armor','horse_attack','horse_defense'].includes(finalType)) {
-        this.equip(card);
-        game.addLog(`${this.name}装备了${card.name || CARD_NAMES[finalType]}。`);
-        return true;
-      }
-
-      // 杀的处理（增加距离判定和防具效果）
-      if (finalType === 'sha') {
-        let dist = this.getDistanceTo(target);
-        let range = this.getAttackRange();
-        if (dist > range) {
-          game.addLog(`距离不够，无法使用【杀】。`);
-          return false;
+      },
+      onDying: (game, self) => {
+        let shenwei = self.markers?.shenwei || 0;
+        if (shenwei > 0) {
+          game.addLog(`${self.name}发动【保乐】，消耗${shenwei}点神威，回复${shenwei}体力。`);
+          self.recoverHp(shenwei);
+          if (shenwei > self.maxHp) {
+            let inc = shenwei - self.maxHp;
+            self.increaseMaxHp(inc);
+            game.addLog(`体力上限增加${inc}。`);
+          }
+          self.markers.shenwei = 0;
         }
-        let canUse = true;
-        if (!this.skill.canUseShaUnlimited || !this.skill.canUseShaUnlimited(game, this)) {
-          if (this.usedShaThisTurn) { game.addLog("本回合已使用过杀，无法再出。"); return false; }
-        }
-        this.hand.splice(index, 1);
-        game.addLog(`${this.name}对${target.name}使用【杀】！`);
-        if (!this.skill.canUseShaUnlimited || !this.skill.canUseShaUnlimited(game, this)) this.usedShaThisTurn = true;
-        let miss = false;
-        let hasShan = target.hand.some(c => c.type === 'shan');
-        // 防具效果
-        if (target.armor && target.armor.name === '仁王盾' && (card.suit === 'spade' || card.suit === 'club')) {
-          game.addLog(`${target.name}的仁王盾使黑【杀】无效。`);
-          miss = true;
-        } else if (target.armor && target.armor.name === '八卦阵') {
-          let judgeCard = globalDeck.shift(); globalDeck.push(judgeCard);
-          let isRed = (judgeCard.suit === 'heart' || judgeCard.suit === 'diamond');
-          if (isRed) {
-            game.addLog(`${target.name}的八卦阵判定为红色，视为出闪。`);
-            miss = true;
-          } else {
-            game.addLog(`${target.name}的八卦阵判定为黑色，需正常出闪。`);
+      },
+      activeSkills: [
+        {
+          name: "暴怒",
+          limited: true,
+          effect: (game, self) => {
+            if (self.skill.baonuUsed) return false;
+            let x = self.maxHp;
+            if (self.hand.length < x) {
+              game.addLog("手牌不足，觉醒失败。");
+              return false;
+            }
+            for (let i = 0; i < x; i++) self.discardCard(0);
+            let judgeCard = globalDeck.shift();
+            globalDeck.push(judgeCard);
+            if (judgeCard.suit !== 'heart') {
+              game.addLog("觉醒成功！获得【咆哮】");
+              self.skill.raopao = true;
+            } else {
+              game.addLog("觉醒失败，获得负面效果");
+              self.skill.failEffect = true;
+            }
+            self.skill.baonuUsed = true;
+            return true;
           }
         }
-        if (!miss && hasShan) {
-          if (this.skill.onShaMiss && this.skill.onShaMiss(game, this, target)) miss = true;
-          else {
-            let shanIdx = target.hand.findIndex(c => c.type === 'shan');
-            target.hand.splice(shanIdx, 1);
-            game.addLog(`${target.name}使用【闪】！`);
-            miss = true;
-          }
-        }
-        if (!miss) {
-          let damage = 1;
-          if (target.armor && target.armor.name === '白银狮子') {
-            damage = 1;
-            game.addLog(`${target.name}的白银狮子使伤害固定为1，然后弃置。`);
-            target.armor = null;
-          }
-          if (this.skill.onShaDamage) damage = this.skill.onShaDamage(game, this, target, damage);
-          target.loseHp(damage);
-          game.addLog(`${target.name}受到${damage}点伤害！`);
-          if (this.skill.onDamage) this.skill.onDamage(game, this, target);
-        }
-        return true;
-      }
-      // 其他牌的处理（锦囊牌）
-      else if (finalType === 'tao') {
-        this.hand.splice(index,1);
-        if (this === game.dyingCharacter || (this.hp < this.maxHp && !game.dyingCharacter)) {
-          if (this.hp < this.maxHp) {
-            this.recoverHp(1);
-            game.addLog(`${this.name}使用【桃】，回复1点体力。`);
-          } else {
-            game.addLog("体力已满，不能使用桃。");
-          }
-        } else {
-          game.addLog("当前阶段不能使用桃。");
-        }
-        return true;
-      } else if (finalType === 'jiu') {
-        this.hand.splice(index,1);
-        if (this === game.dyingCharacter || (!game.dyingCharacter && this.hp > 0)) {
-          game.addLog(`${this.name}使用【酒】，下一张杀伤害+1。`);
-          this.buffJiu = true;
-        } else {
-          game.addLog("当前阶段不能使用酒。");
-        }
-        return true;
-      } else if (finalType === 'le') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}对${target.name}使用【乐不思蜀】。`);
-        target.le = true;
-        return true;
-      } else if (finalType === 'bing') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}对${target.name}使用【兵粮寸断】。`);
-        target.bing = true;
-        return true;
-      } else if (finalType === 'guo') {
-        this.hand.splice(index,1);
-        if (target.hand.length > 0) {
-          let discardIdx = 0;
-          if (target.isPlayer && game.currentTurn === 'player') {
-            let idx = prompt(`选择${target.name}的手牌：0-${target.hand.length-1}\n${target.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
-            discardIdx = parseInt(idx);
-            if (isNaN(discardIdx) || discardIdx < 0 || discardIdx >= target.hand.length) discardIdx = 0;
-          }
-          let removed = target.hand.splice(discardIdx, 1)[0];
-          game.addLog(`${this.name}弃置${target.name}的${CARD_NAMES[removed.type]}。`);
-        } else game.addLog(`${target.name}没有手牌可拆。`);
-        return true;
-      } else if (finalType === 'shun') {
-        this.hand.splice(index,1);
-        if (target.hand.length > 0) {
-          let stealIdx = 0;
-          if (target.isPlayer && game.currentTurn === 'player') {
-            let idx = prompt(`选择要顺走的牌：0-${target.hand.length-1}\n${target.hand.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
-            stealIdx = parseInt(idx);
-            if (isNaN(stealIdx) || stealIdx < 0 || stealIdx >= target.hand.length) stealIdx = 0;
-          }
-          let stolen = target.hand.splice(stealIdx, 1)[0];
-          this.hand.push(stolen);
-          game.addLog(`${this.name}获得${target.name}的${CARD_NAMES[stolen.type]}。`);
-        } else game.addLog(`${target.name}没有手牌可顺。`);
-        return true;
-      } else if (finalType === 'wuzhong') {
-        this.hand.splice(index,1);
-        this.drawCards(2);
-        game.addLog(`${this.name}使用【无中生有】，摸两张牌。`);
-        return true;
-      } else if (finalType === 'juedou') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}对${target.name}发起【决斗】！`);
-        let attacker = this, defender = target;
-        let round = 0;
-        while (true) {
-          let hasSha = defender.hand.some(c => c.type === 'sha');
-          if (!hasSha) {
-            defender.loseHp(1);
-            game.addLog(`${defender.name}决斗失败，受到1点伤害。`);
-            break;
-          } else {
-            let shaIdx = defender.hand.findIndex(c => c.type === 'sha');
-            defender.hand.splice(shaIdx, 1);
-            game.addLog(`${defender.name}打出【杀】。`);
-            [attacker, defender] = [defender, attacker];
-            round++;
-            if (round > 10) break;
-          }
-        }
-        return true;
-      } else if (finalType === 'nanman') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【南蛮入侵】！`);
-        let others = [this === game.player ? game.ai : game.player];
-        for (let other of others) {
-          let hasSha = other.hand.some(c => c.type === 'sha');
-          if (hasSha) {
-            let shaIdx = other.hand.findIndex(c => c.type === 'sha');
-            other.hand.splice(shaIdx, 1);
-            game.addLog(`${other.name}打出【杀】。`);
-          } else {
-            other.loseHp(1);
-            game.addLog(`${other.name}受到1点伤害。`);
-          }
-        }
-        return true;
-      } else if (finalType === 'wanjian') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【万箭齐发】！`);
-        let others = [this === game.player ? game.ai : game.player];
-        for (let other of others) {
-          let hasShan = other.hand.some(c => c.type === 'shan');
-          if (hasShan) {
-            let shanIdx = other.hand.findIndex(c => c.type === 'shan');
-            other.hand.splice(shanIdx, 1);
-            game.addLog(`${other.name}打出【闪】。`);
-          } else {
-            other.loseHp(1);
-            game.addLog(`${other.name}受到1点伤害。`);
-          }
-        }
-        return true;
-      } else if (finalType === 'wuxie') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【无懈可击】。`);
-        // 无懈可击通常用于抵消其他锦囊，简化处理
-        return true;
-      } else if (finalType === 'jie') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}对${target.name}使用【借刀杀人】。`);
-        let other = (target === game.player) ? game.ai : game.player;
-        if (target.hand.some(c => c.type === 'sha')) {
-          let shaIdx = target.hand.findIndex(c => c.type === 'sha');
-          target.useCard(shaIdx, other, game);
-        } else {
-          game.addLog(`${target.name}没有杀，武器被借走（简化）。`);
-        }
-        return true;
-      } else if (finalType === 'wugu') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【五谷丰登】。`);
-        let cards = [];
-        for (let i=0; i<2; i++) {
-          if (globalDeck.length === 0) globalDeck = buildDeck();
-          cards.push(globalDeck.shift());
-        }
-        game.addLog(`亮出牌：${cards.map(c=>CARD_NAMES[c.type]+getSuitName(c.suit)+c.rank).join('，')}`);
-        let picker = this;
-        for (let i=0; i<cards.length; i++) {
-          let idx = prompt(`选择一张牌（0-${cards.length-1}）：\n${cards.map((c,i)=>`${i}: ${CARD_NAMES[c.type]} ${getSuitName(c.suit)}${c.rank}`).join('\n')}`);
-          let selected = parseInt(idx);
-          if (!isNaN(selected) && selected >=0 && selected < cards.length) {
-            picker.hand.push(cards[selected]);
-            game.addLog(`${picker.name}获得${CARD_NAMES[cards[selected].type]}。`);
-            cards.splice(selected,1);
-          }
-          picker = (picker === game.player) ? game.ai : game.player;
-        }
-        return true;
-      } else if (finalType === 'taoyuan') {
-        this.hand.splice(index,1);
-        game.addLog(`${this.name}使用【桃园结义】，所有角色回复1点体力。`);
-        game.player.recoverHp(1);
-        game.ai.recoverHp(1);
-        return true;
-      } else if (finalType === 'shan') {
-        game.addLog("闪不能主动使用。");
-        return false;
-      }
-      return false;
+      ]
     }
   }
+};
 
   // ---------- Game 类 ----------
   class Game {
