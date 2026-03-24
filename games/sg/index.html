@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名        &#x2F;* 现代游戏风格样式 - 已优化 *&#x2F;     * {       box-sizing: border-box;       margin: 0;       padding: 0;     }     body {       font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Microsoft YaHei&#39;, system-u">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-24T13:13:16.043Z">
-<meta property="article:modified_time" content="2026-03-24T13:13:16.043Z">
+<meta property="article:published_time" content="2026-03-24T13:24:37.151Z">
+<meta property="article:modified_time" content="2026-03-24T13:24:37.151Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -825,36 +825,34 @@
       },
       activeSkills: [
         {
-          name: "暴怒",
-          limited: true,
-          effect: (game, self) => {
-            if (self.skill.baonuUsed) {
-              game.addLog("【暴怒】已使用过，无法再次发动。");
-              return false;
-            }
-            let x = self.maxHp;
-            if (self.hand.length < x) {
-              game.addLog("手牌不足，觉醒失败。");
-              return false;
-            }
-            for (let i = 0; i < x; i++) self.discardCard(0);
-            let judgeCard = globalDeck.shift();
-            globalDeck.push(judgeCard);
-            if (judgeCard.suit !== 'heart') {
-              game.addLog("觉醒成功！获得【咆哮】");
-              self.skill.raopao = true;
-            } else {
-              game.addLog("觉醒失败，获得负面效果");
-              self.skill.failEffect = true;
-            }
-            self.skill.baonuUsed = true;
-            return true;
-          }
-        }
-      ]
+          {
+  name: "暴怒",
+  limited: true,   // 添加限定技标记
+  effect: (game, self) => {
+    // 检查是否已使用
+    if (self.skill.baonuUsed) {
+      game.addLog("【暴怒】已使用过，无法再次发动。");
+      return false;
     }
+    let x = self.maxHp;
+    if (self.hand.length < x) {
+      game.addLog("手牌不足，觉醒失败。");
+      return false;
+    }
+    for (let i = 0; i < x; i++) self.discardCard(0);
+    let judgeCard = globalDeck.shift();
+    globalDeck.push(judgeCard);
+    if (judgeCard.suit !== 'heart') {
+      game.addLog("觉醒成功！获得【咆哮】");
+      self.skill.raopao = true;
+    } else {
+      game.addLog("觉醒失败，获得负面效果");
+      self.skill.failEffect = true;
+    }
+    self.skill.baonuUsed = true;   // 标记已使用
+    return true;
   }
-};
+}
   // ---------- Character 类 ----------
   class Character {
     constructor(heroData, isPlayer) {
