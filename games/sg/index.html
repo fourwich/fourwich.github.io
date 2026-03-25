@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名·联机版        &#x2F;* &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; 样式（完整版，已优化） &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; *&#x2F;     * {       box-sizing: border-box;       margin: 0;       padding: 0;     }     body {       font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Mic">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-25T12:34:02.091Z">
-<meta property="article:modified_time" content="2026-03-25T12:34:02.091Z">
+<meta property="article:published_time" content="2026-03-25T12:38:04.122Z">
+<meta property="article:modified_time" content="2026-03-25T12:38:04.122Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -1146,14 +1146,18 @@
   }
 
   function waitForOpponent() {
-    const roomRef = ref(db, 'rooms/' + currentRoomId);
-    onValue(roomRef, (snapshot) => {
-      const room = snapshot.val();
-      if (room && ((mySide === 'player1' && room.player2) || (mySide === 'player2' && room.player1))) {
+  const roomRef = ref(db, 'rooms/' + currentRoomId);
+  onValue(roomRef, (snapshot) => {
+    const room = snapshot.val();
+    if (room && ((mySide === 'player1' && room.player2) || (mySide === 'player2' && room.player1))) {
+      // 如果双方都已加入且游戏未开始，则开始游戏
+      if (!room.gameStarted) {
+        update(roomRef, { gameStarted: true });
         startGameFromFirebase(room);
       }
-    });
-  }
+    }
+  });
+}
 
   function startGameFromFirebase(room) {
     document.getElementById('heroSelector').style.display = 'none';
