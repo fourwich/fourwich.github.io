@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名        * {       box-sizing: border-box;       margin: 0;       padding: 0;     }     body {       font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Microsoft YaHei&#39;, system-ui, -apple-system, BlinkMa">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-24T13:32:07.074Z">
-<meta property="article:modified_time" content="2026-03-24T13:32:07.074Z">
+<meta property="article:published_time" content="2026-03-25T12:09:32.510Z">
+<meta property="article:modified_time" content="2026-03-25T12:09:32.510Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -429,6 +429,11 @@
 <div id="app">
   <div id="heroSelector" class="hero-selector">
     <h2>请选择你的武将</h2>
+    <div style="margin: 20px 0;">
+  <input type="text" id="roomId" placeholder="房间号" style="padding: 8px; border-radius: 8px;">
+  <button id="createRoomBtn">创建房间</button>
+  <button id="joinRoomBtn">加入房间</button>
+</div>
     <div class="hero-list" id="heroList"></div>
   </div>
   <div id="gamePanel" style="display: none;">
@@ -1329,14 +1334,133 @@
       container.appendChild(cardDiv);
     }
   }
+  // ---------- 联机逻辑 ----------
+let currentRoomId = null;
+let mySide = null; // 'player1' 或 'player2'
+
+function createRoom() {
+  const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+  currentRoomId = roomId;
+  document.getElementById('roomId').value = roomId;
+  const roomRef = ref(db, 'rooms/' + roomId);
+  set(roomRef, {
+    player1: { joined: true, hp: 4, ready: false },
+    player2: null,
+    currentTurn: 'player1',
+    gameStarted: false
+  });
+  mySide = 'player1';
+  waitForOpponent();
+}
+
+function joinRoom() {
+  const roomId = document.getElementById('roomId').value.trim();
+  if (!roomId) return;
+  currentRoomId = roomId;
+  const roomRef = ref(db, 'rooms/' + roomId);
+  onValue(roomRef, (snapshot) => {
+    const room = snapshot.val();
+    if (room && !room.player2) {
+      update(roomRef, { player2: { joined: true, hp: 4, ready: false } });
+      mySide = 'player2';
+      waitForOpponent();
+    } else if (room && room.player2) {
+      alert('房间已满');
+    } else {
+      alert('房间不存在');
+    }
+  }, { onlyOnce: true });
+}
+
+function waitForOpponent() {
+  const roomRef = ref(db, 'rooms/' + currentRoomId);
+  onValue(roomRef, (snapshot) => {
+    const room = snapshot.val();
+    if (room && ((mySide === 'player1' && room.player2) || (mySide === 'player2' && room.player1))) {
+      startGameFromFirebase(room);
+    }
+  });
+}
+
+function startGameFromFirebase(room) {
+  document.getElementById('heroSelector').style.display = 'none';
+  document.getElementById('gamePanel').style.display = 'block';
+  if (mySide === 'player1') {
+    document.getElementById('playerName').innerText = '玩家1';
+    document.getElementById('aiName').innerText = '玩家2';
+  } else {
+    document.getElementById('playerName').innerText = '玩家2';
+    document.getElementById('aiName').innerText = '玩家1';
+  }
+  updateUIFromFirebase(room);
+  listenGameState();
+}
+
+function listenGameState() {
+  const roomRef = ref(db, 'rooms/' + currentRoomId);
+  onValue(roomRef, (snapshot) => {
+    const room = snapshot.val();
+    if (room) {
+      updateUIFromFirebase(room);
+      const isMyTurn = (room.currentTurn === mySide);
+      const endTurnBtn = document.getElementById('endTurnBtn');
+      if (endTurnBtn) endTurnBtn.disabled = !isMyTurn;
+    }
+  });
+}
+
+function updateUIFromFirebase(room) {
+  if (mySide === 'player1') {
+    document.getElementById('playerHp').innerText = room.player1.hp;
+    document.getElementById('aiHp').innerText = room.player2.hp;
+  } else {
+    document.getElementById('playerHp').innerText = room.player2.hp;
+    document.getElementById('aiHp').innerText = room.player1.hp;
+  }
+}
+
+// 示例攻击函数（暂时用这个测试同步）
+function attack() {
+  const roomRef = ref(db, 'rooms/' + currentRoomId);
+  runTransaction(roomRef, (room) => {
+    if (!room || room.currentTurn !== mySide) return;
+    const target = mySide === 'player1' ? 'player2' : 'player1';
+    room[target].hp = Math.max(0, (room[target].hp || 4) - 1);
+    room.currentTurn = target;
+    return room;
+  });
+}
 
   window.onload = () => {
-    buildHeroSelector();
-    document.getElementById('restartBtn').onclick = () => {
-      document.getElementById('heroSelector').style.display = 'block';
-      document.getElementById('gamePanel').style.display = 'none';
-    };
+  buildHeroSelector();
+  document.getElementById('restartBtn').onclick = () => {
+    document.getElementById('heroSelector').style.display = 'block';
+    document.getElementById('gamePanel').style.display = 'none';
   };
+  // 绑定房间按钮
+  const createBtn = document.getElementById('createRoomBtn');
+  const joinBtn = document.getElementById('joinRoomBtn');
+  if (createBtn) createBtn.onclick = createRoom;
+  if (joinBtn) joinBtn.onclick = joinRoom;
+};
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, update, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAqqNAN11FZ0naIQQEPe2q-jbTHphZXVwc",
+    authDomain: "ylcmol.firebaseapp.com",
+    databaseURL: "https://ylcmol-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "ylcmol",
+    storageBucket: "ylcmol.firebasestorage.app",
+    messagingSenderId: "587522987619",
+    appId: "1:587522987619:web:665a6aae9d4fc8283e0a56",
+    measurementId: "G-H915X268CV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window.db = db; // 方便调试
 </script>
 </body>
 </html>
