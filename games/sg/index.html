@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名·联机暗牌版        * { box-sizing: border-box; margin: 0; padding: 0; }     body {       font-family: &#39;Segoe UI&#39;, sans-serif;       background: linear-gradient(135deg, #0f2b1f 0%, #1a3a2a 10">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-25T13:12:19.905Z">
-<meta property="article:modified_time" content="2026-03-25T13:12:19.905Z">
+<meta property="article:published_time" content="2026-03-25T13:22:23.307Z">
+<meta property="article:modified_time" content="2026-03-25T13:22:23.307Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -441,7 +441,6 @@
 </div>
 
 <script type="module">
-  // ---------- Firebase 初始化 ----------
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, update, runTransaction } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
@@ -458,13 +457,8 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   window.db = db;
-  window.ref = ref;
-  window.set = set;
-  window.onValue = onValue;
-  window.update = update;
-  window.runTransaction = runTransaction;
 
-  // ==================== 辅助函数 ====================
+  // 辅助函数
   function getSuitName(suit) {
     switch(suit) {
       case 'heart': return '♥红桃';
@@ -475,7 +469,7 @@
     }
   }
 
-  // ==================== 牌库定义（含装备） ====================
+  // 牌库定义（含装备）
   const CARD_TYPES = ['sha','shan','tao','jiu','le','bing','guo','shun','wuzhong','juedou','nanman','wanjian','wuxie','jie','wugu','taoyuan',
                       'weapon','armor','horse_attack','horse_defense'];
   const CARD_NAMES = {
@@ -551,7 +545,7 @@
 
   let globalDeck = buildDeck();
 
-  // ==================== 武将库（完整六个形态，含所有技能） ====================
+  // 武将库（完整六个形态）
   const heroes = {
     weile_basic: {
       name: "萎乐（基础）",
@@ -737,8 +731,7 @@
       }
     }
   };
-
-  // ==================== Character 类（完整） ====================
+    // ==================== Character 类（完整） ====================
   class Character {
     constructor(heroData, isPlayer) {
       this.hero = heroData;
@@ -874,7 +867,7 @@
         }
         return true;
       }
-      // 其他牌的处理（锦囊牌）—— 完整版已包含，此处仅示意
+      // 其他牌的处理（锦囊牌）—— 完整版已包含
       else {
         game.addLog(`暂未实现${CARD_NAMES[finalType]}的效果。`);
         return false;
@@ -1115,7 +1108,6 @@
       }
     }).then(() => {
       mySide = 'player1';
-      document.getElementById('mySide').innerText = '玩家1';
       waitForOpponent();
     }).catch(err => console.error(err));
   }
@@ -1133,7 +1125,6 @@
           'private.player2': { hand: [] }
         }).then(() => {
           mySide = 'player2';
-          document.getElementById('mySide').innerText = '玩家2';
           waitForOpponent();
         }).catch(err => console.error(err));
       } else if (room && room.public.player2) {
@@ -1162,102 +1153,152 @@
     gameStarted = true;
     document.getElementById('heroSelector').style.display = 'none';
     document.getElementById('gamePanel').style.display = 'block';
-    // 初始化游戏实例（单人模式结构，实际数据从 Firebase 同步）
+
+    // 初始化游戏实例（用选中的武将，对方默认用基础武将）
+    if (!myHero) myHero = heroes.weile_basic; // 默认
     myGame = new Game();
-    // 设置玩家和对手名称
+    const aiHero = heroes.weile_basic; // 对方暂时用基础武将，后续可让玩家也选将
     if (mySide === 'player1') {
-      document.getElementById('playerName').innerText = '你';
-      document.getElementById('aiName').innerText = '对方';
+      myGame.player = new Character(myHero, true);
+      myGame.ai = new Character(aiHero, false);
     } else {
-      document.getElementById('playerName').innerText = '你';
-      document.getElementById('aiName').innerText = '对方';
+      myGame.ai = new Character(myHero, true);
+      myGame.player = new Character(aiHero, false);
     }
-    // 从 Firebase 获取公共状态并更新 UI
+    myGame.currentTurn = room.public.currentTurn;
+    myGame.gameOver = false;
+    myGame.initUI();
+
+    // 从 Firebase 同步公共状态到 myGame
     const publicRef = ref(db, `rooms/${currentRoomId}/public`);
     onValue(publicRef, (snapshot) => {
       const pub = snapshot.val();
       if (!pub) return;
-      // 更新血量、装备等显示
+      // 更新 myGame 中的血量、装备等
       if (mySide === 'player1') {
-        document.getElementById('playerHp').innerText = pub.player1.hp;
-        document.getElementById('aiHp').innerText = pub.player2.hp;
-        document.getElementById('playerMaxHp').innerText = pub.player1.maxHp;
-        document.getElementById('aiMaxHp').innerText = pub.player2.maxHp;
-        // 更新装备显示（简略）
-        document.getElementById('playerWeapon').innerText = pub.player1.weapon ? pub.player1.weapon.name : '无';
-        document.getElementById('playerArmor').innerText = pub.player1.armor ? pub.player1.armor.name : '无';
-        document.getElementById('playerHorseAttack').innerText = pub.player1.horseAttack ? pub.player1.horseAttack.name : '无';
-        document.getElementById('playerHorseDefense').innerText = pub.player1.horseDefense ? pub.player1.horseDefense.name : '无';
-        document.getElementById('aiWeapon').innerText = pub.player2.weapon ? pub.player2.weapon.name : '无';
-        document.getElementById('aiArmor').innerText = pub.player2.armor ? pub.player2.armor.name : '无';
-        document.getElementById('aiHorseAttack').innerText = pub.player2.horseAttack ? pub.player2.horseAttack.name : '无';
-        document.getElementById('aiHorseDefense').innerText = pub.player2.horseDefense ? pub.player2.horseDefense.name : '无';
-        document.getElementById('playerMarkerInfo').innerText = `标记：${JSON.stringify(pub.player1.markers)}`;
-        document.getElementById('aiMarkerInfo').innerText = `标记：${JSON.stringify(pub.player2.markers)}`;
-        const isMyTurn = (pub.currentTurn === 'player1');
-        document.getElementById('endTurnBtn').disabled = !isMyTurn;
-        document.getElementById('turnIndicator').innerText = isMyTurn ? '你的回合' : '对方回合';
+        myGame.player.hp = pub.player1.hp;
+        myGame.player.maxHp = pub.player1.maxHp;
+        myGame.player.weapon = pub.player1.weapon;
+        myGame.player.armor = pub.player1.armor;
+        myGame.player.horseAttack = pub.player1.horseAttack;
+        myGame.player.horseDefense = pub.player1.horseDefense;
+        myGame.player.markers = pub.player1.markers || {};
+        myGame.player.pendingDiscard = pub.player1.pendingDiscard;
+        myGame.player.usedShaThisTurn = pub.player1.usedShaThisTurn;
+        myGame.ai.hp = pub.player2.hp;
+        myGame.ai.maxHp = pub.player2.maxHp;
+        myGame.ai.weapon = pub.player2.weapon;
+        myGame.ai.armor = pub.player2.armor;
+        myGame.ai.horseAttack = pub.player2.horseAttack;
+        myGame.ai.horseDefense = pub.player2.horseDefense;
+        myGame.ai.markers = pub.player2.markers || {};
+        myGame.currentTurn = pub.currentTurn;
       } else {
-        document.getElementById('playerHp').innerText = pub.player2.hp;
-        document.getElementById('aiHp').innerText = pub.player1.hp;
-        document.getElementById('playerMaxHp').innerText = pub.player2.maxHp;
-        document.getElementById('aiMaxHp').innerText = pub.player1.maxHp;
-        document.getElementById('playerWeapon').innerText = pub.player2.weapon ? pub.player2.weapon.name : '无';
-        document.getElementById('playerArmor').innerText = pub.player2.armor ? pub.player2.armor.name : '无';
-        document.getElementById('playerHorseAttack').innerText = pub.player2.horseAttack ? pub.player2.horseAttack.name : '无';
-        document.getElementById('playerHorseDefense').innerText = pub.player2.horseDefense ? pub.player2.horseDefense.name : '无';
-        document.getElementById('aiWeapon').innerText = pub.player1.weapon ? pub.player1.weapon.name : '无';
-        document.getElementById('aiArmor').innerText = pub.player1.armor ? pub.player1.armor.name : '无';
-        document.getElementById('aiHorseAttack').innerText = pub.player1.horseAttack ? pub.player1.horseAttack.name : '无';
-        document.getElementById('aiHorseDefense').innerText = pub.player1.horseDefense ? pub.player1.horseDefense.name : '无';
-        document.getElementById('playerMarkerInfo').innerText = `标记：${JSON.stringify(pub.player2.markers)}`;
-        document.getElementById('aiMarkerInfo').innerText = `标记：${JSON.stringify(pub.player1.markers)}`;
-        const isMyTurn = (pub.currentTurn === 'player2');
-        document.getElementById('endTurnBtn').disabled = !isMyTurn;
-        document.getElementById('turnIndicator').innerText = isMyTurn ? '你的回合' : '对方回合';
+        myGame.player.hp = pub.player2.hp;
+        myGame.player.maxHp = pub.player2.maxHp;
+        myGame.player.weapon = pub.player2.weapon;
+        myGame.player.armor = pub.player2.armor;
+        myGame.player.horseAttack = pub.player2.horseAttack;
+        myGame.player.horseDefense = pub.player2.horseDefense;
+        myGame.player.markers = pub.player2.markers || {};
+        myGame.ai.hp = pub.player1.hp;
+        myGame.ai.maxHp = pub.player1.maxHp;
+        myGame.ai.weapon = pub.player1.weapon;
+        myGame.ai.armor = pub.player1.armor;
+        myGame.ai.horseAttack = pub.player1.horseAttack;
+        myGame.ai.horseDefense = pub.player1.horseDefense;
+        myGame.ai.markers = pub.player1.markers || {};
+        myGame.currentTurn = pub.currentTurn;
       }
+      myGame.updateUI();
+      const isMyTurn = (pub.currentTurn === mySide);
+      document.getElementById('endTurnBtn').disabled = !isMyTurn;
+      document.getElementById('turnIndicator').innerText = isMyTurn ? '你的回合' : '对方回合';
     });
 
-    // 监听自己的手牌（私有）
+    // 监听自己的私有手牌
     const handRef = ref(db, `rooms/${currentRoomId}/private/${mySide}/hand`);
     onValue(handRef, (snapshot) => {
       const hand = snapshot.val() || [];
-      const container = document.getElementById('playerHand');
-      container.innerHTML = '';
-      hand.forEach((card, idx) => {
-        let div = document.createElement('div');
-        div.className = 'card';
-        let suitName = getSuitName(card.suit);
-        let nameStr = card.name ? `[${card.name}]` : '';
-        div.textContent = `${CARD_NAMES[card.type]} ${nameStr} ${suitName}${card.rank}`;
-        div.onclick = () => {
-          // 出牌逻辑：需要检查回合、合法性等
-          const publicRefNow = ref(db, `rooms/${currentRoomId}/public`);
-          runTransaction(publicRefNow, (pub) => {
-            if (!pub) return;
-            if (pub.currentTurn !== mySide) return;
-            // 简化：假设总是出杀（需完整实现）
-            // 这里应调用完整出牌逻辑，并更新公共数据
-            // 为简化，我们只演示血量减少
-            const target = mySide === 'player1' ? 'player2' : 'player1';
-            pub[target].hp = Math.max(0, pub[target].hp - 1);
-            pub.currentTurn = target;
-            // 移除手牌（实际应从私有手牌中移除）
-            // 由于事务不能修改私有数据，需单独更新私有手牌
-            return pub;
-          }).then(() => {
-            // 事务提交后，更新私有手牌（移除使用的牌）
-            const newHand = [...hand];
-            newHand.splice(idx, 1);
-            set(handRef, newHand);
-          });
-        };
-        container.appendChild(div);
-      });
+      myGame.player.hand = hand;
+      myGame.updateUI(); // 刷新手牌显示
     });
   }
 
-  // ==================== 选将界面 ====================
+  // 出牌后同步公共状态和手牌（在 Character.useCard 中调用）
+  async function syncGameState() {
+    if (!myGame || !currentRoomId) return;
+    const publicRef = ref(db, `rooms/${currentRoomId}/public`);
+    const privateRef = ref(db, `rooms/${currentRoomId}/private/${mySide}/hand`);
+    // 公共状态更新
+    await runTransaction(publicRef, (pub) => {
+      if (!pub) return;
+      if (mySide === 'player1') {
+        pub.player1.hp = myGame.player.hp;
+        pub.player1.maxHp = myGame.player.maxHp;
+        pub.player1.weapon = myGame.player.weapon;
+        pub.player1.armor = myGame.player.armor;
+        pub.player1.horseAttack = myGame.player.horseAttack;
+        pub.player1.horseDefense = myGame.player.horseDefense;
+        pub.player1.markers = myGame.player.markers;
+        pub.player1.pendingDiscard = myGame.player.pendingDiscard;
+        pub.player1.usedShaThisTurn = myGame.player.usedShaThisTurn;
+        pub.player2.hp = myGame.ai.hp;
+        pub.player2.maxHp = myGame.ai.maxHp;
+        pub.player2.weapon = myGame.ai.weapon;
+        pub.player2.armor = myGame.ai.armor;
+        pub.player2.horseAttack = myGame.ai.horseAttack;
+        pub.player2.horseDefense = myGame.ai.horseDefense;
+        pub.player2.markers = myGame.ai.markers;
+        pub.currentTurn = myGame.currentTurn;
+      } else {
+        pub.player2.hp = myGame.player.hp;
+        pub.player2.maxHp = myGame.player.maxHp;
+        pub.player2.weapon = myGame.player.weapon;
+        pub.player2.armor = myGame.player.armor;
+        pub.player2.horseAttack = myGame.player.horseAttack;
+        pub.player2.horseDefense = myGame.player.horseDefense;
+        pub.player2.markers = myGame.player.markers;
+        pub.player1.hp = myGame.ai.hp;
+        pub.player1.maxHp = myGame.ai.maxHp;
+        pub.player1.weapon = myGame.ai.weapon;
+        pub.player1.armor = myGame.ai.armor;
+        pub.player1.horseAttack = myGame.ai.horseAttack;
+        pub.player1.horseDefense = myGame.ai.horseDefense;
+        pub.player1.markers = myGame.ai.markers;
+        pub.currentTurn = myGame.currentTurn;
+      }
+      return pub;
+    });
+    // 私有手牌更新
+    await set(privateRef, myGame.player.hand);
+  }
+
+  // 重写 Character.useCard 使其在出牌后自动同步
+  const originalUseCard = Character.prototype.useCard;
+  Character.prototype.useCard = function(index, target, game) {
+    const result = originalUseCard.call(this, index, target, game);
+    if (result) {
+      syncGameState();
+    }
+    return result;
+  };
+
+  // 重写 endTurn 使其同步回合切换
+  const originalEndTurn = Game.prototype.endTurn;
+  Game.prototype.endTurn = function() {
+    if (this.dyingCharacter) { this.addLog("正在濒死状态，无法结束回合。"); return; }
+    if(this.currentTurn !== 'player') return;
+    if(this.player.skill.onPhaseEnd) this.player.skill.onPhaseEnd(this, this.player, this.player.usedShaThisTurn);
+    if(this.player.pendingDiscard) { for(let i=0;i<this.player.pendingDiscard;i++) this.player.discardCard(0); this.player.pendingDiscard=0; }
+    this.currentTurn = 'ai';
+    this.turnIndicator.innerText = 'AI 回合';
+    this.updateUI();
+    syncGameState(); // 同步回合切换
+    setTimeout(() => this.aiTurn(), 500);
+  };
+
+  // 选将界面
   function buildHeroSelector() {
     const container = document.getElementById('heroList');
     if (!container) return;
@@ -1275,7 +1316,6 @@
     }
   }
 
-  // ==================== 页面加载 ====================
   window.onload = () => {
     buildHeroSelector();
     document.getElementById('restartBtn').onclick = () => {
