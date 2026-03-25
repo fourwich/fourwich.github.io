@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="四明治_fourwich.ovo">
 <meta property="og:description" content="一乐成名·联机版        &#x2F;* &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; 样式（完整版，已优化） &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; *&#x2F;     * {       box-sizing: border-box;       margin: 0;       padding: 0;     }     body {       font-family: &#39;Segoe UI&#39;, &#39;华文楷书&#39;, &#39;Mic">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-25T12:38:04.122Z">
-<meta property="article:modified_time" content="2026-03-25T12:38:04.122Z">
+<meta property="article:published_time" content="2026-03-25T12:43:11.158Z">
+<meta property="article:modified_time" content="2026-03-25T12:43:11.158Z">
 <meta property="article:author" content="fourwich">
 <meta name="twitter:card" content="summary">
 
@@ -1145,14 +1145,18 @@
     }, { onlyOnce: true });
   }
 
-  function waitForOpponent() {
+ function waitForOpponent() {
   const roomRef = ref(db, 'rooms/' + currentRoomId);
   onValue(roomRef, (snapshot) => {
     const room = snapshot.val();
-    if (room && ((mySide === 'player1' && room.player2) || (mySide === 'player2' && room.player1))) {
-      // 如果双方都已加入且游戏未开始，则开始游戏
-      if (!room.gameStarted) {
+    if (room) {
+      // 双方都已加入且游戏尚未开始
+      if (room.player1 && room.player2 && !room.gameStarted) {
         update(roomRef, { gameStarted: true });
+        startGameFromFirebase(room);
+      }
+      // 如果游戏已经开始，但当前页面还未进入游戏（例如刷新后重新加入），则直接进入
+      else if (room.gameStarted && document.getElementById('gamePanel').style.display === 'none') {
         startGameFromFirebase(room);
       }
     }
