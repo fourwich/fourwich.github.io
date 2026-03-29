@@ -1103,26 +1103,30 @@
   let myHero = null; // 选中的武将
   let gameStarted = false;
 
-  function createRoom() {
-    const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    currentRoomId = roomId;
-    document.getElementById('roomId').value = roomId;
-    const roomRef = ref(db, 'rooms/' + roomId);
-    set(roomRef, {
-      public: {
-        player1: { hp: 4, maxHp: 4, weapon: null, armor: null, horseAttack: null, horseDefense: null, markers: {}, pendingDiscard: 0, usedShaThisTurn: false },
-        player2: null,
-        currentTurn: 'player1',
-        gameStarted: false
-      },
-      private: {
-        player1: { hand: [] },
-        player2: null
-      }
-    }).then(() => {
-      mySide = 'player1';
-      waitForOpponent();
-    }).catch(err => console.error(err));
+function createRoom() {
+  set(roomRef, {
+    public: {
+      player1: { hero: null, ready: false },
+      player2: null,
+      currentTurn: 'player1',
+      gameStarted: false
+    },
+    private: {}
+  }).then(() => {
+    mySide = 'player1';
+    showRandomHeroSelection();
+    waitForOpponentReady();
+  });
+}
+
+function joinRoom() {
+  update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
+    mySide = 'player2';
+    showRandomHeroSelection();
+    waitForOpponentReady();
+  });
+}
+// 注意：这里没有多余的 }，因为上面已经关闭了 Game 类的定义了。
     function createRoom() {
   set(roomRef, {
     public: {
@@ -1131,7 +1135,7 @@
       currentTurn: 'player1',
       gameStarted: false
     },
-    private: { ... }
+    private: { }
   }).then(() => {
     mySide = 'player1';
     // 显示随机武将选择面板
@@ -1147,7 +1151,6 @@ function joinRoom() {
     waitForOpponentReady();
   });
 }
-  }
   function waitForOpponentReady() {
   const roomRef = ref(db, `rooms/${currentRoomId}/public`);
   onValue(roomRef, (snapshot) => {
@@ -1238,7 +1241,8 @@ function checkBothReady() {
   myGame.startGameWithHeroes(myHero, oppHero); // 需要实现此方法
   // ... 其余 UI 初始化代码不变 ...
 }
-}
+    }
+
 
 async function selectHero(hero, heroKey) {
   // 将选中的武将保存到 Firebase 公共状态
