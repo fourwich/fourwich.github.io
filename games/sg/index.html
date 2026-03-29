@@ -1102,23 +1102,6 @@
   let myGame = null; // 当前游戏实例
   let myHero = null; // 选中的武将
   let gameStarted = false;
-
-function createRoom() {
-  set(roomRef, {
-    public: {
-      player1: { hero: null, ready: false },
-      player2: null,
-      currentTurn: 'player1',
-      gameStarted: false
-    },
-    private: {}
-  }).then(() => {
-    mySide = 'player1';
-    showRandomHeroSelection();
-    waitForOpponentReady();
-  });
-}
-
 function joinRoom() {
   update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
     mySide = 'player2';
