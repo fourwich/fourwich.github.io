@@ -1081,7 +1081,20 @@
     }
 
     endGame(msg) { this.gameOver = true; this.addLog(msg); this.endTurnBtn.disabled = true; }
+    startGameWithHeroes(playerHero, aiHero) {
+  this.player = new Character(playerHero, true);
+  this.ai = new Character(aiHero, false);
+  this.currentTurn = 'player';
+  this.gameOver = false;
+  this.dyingCharacter = null;
+  this.initUI();
+  this.addLog('游戏开始！');
+  this.player.drawCards(4);
+  this.ai.drawCards(4);
+  this.updateUI();
+}
   }
+  
 
   // ==================== 联机暗牌逻辑 ====================
   let currentRoomId = null;
@@ -1110,8 +1123,51 @@
       mySide = 'player1';
       waitForOpponent();
     }).catch(err => console.error(err));
+    function createRoom() {
+  set(roomRef, {
+    public: {
+      player1: { hero: null, ready: false }, // 新增 hero 和 ready
+      player2: null,
+      currentTurn: 'player1',
+      gameStarted: false
+    },
+    private: { ... }
+  }).then(() => {
+    mySide = 'player1';
+    // 显示随机武将选择面板
+    showRandomHeroSelection();
+    // 等待对方选将（监听对方 ready 状态）
+    waitForOpponentReady();
+  });
+}
+function joinRoom() {
+  update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
+    mySide = 'player2';
+    showRandomHeroSelection();
+    waitForOpponentReady();
+  });
+}
   }
+  function waitForOpponentReady() {
+  const roomRef = ref(db, `rooms/${currentRoomId}/public`);
+  onValue(roomRef, (snapshot) => {
+    const pub = snapshot.val();
+    if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
+      // 双方都选好了，开始游戏
+      startGameFromFirebase(pub);
+    }
+  });
+}
 
+function checkBothReady() {
+  const roomRef = ref(db, `rooms/${currentRoomId}/public`);
+  onValue(roomRef, (snapshot) => {
+    const pub = snapshot.val();
+    if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
+      startGameFromFirebase(pub);
+    }
+  }, { onlyOnce: true });
+}
   function joinRoom() {
     const roomId = document.getElementById('roomId').value.trim();
     if (!roomId) return alert('请输入房间号');
@@ -1153,6 +1209,46 @@
     gameStarted = true;
     document.getElementById('heroSelector').style.display = 'none';
     document.getElementById('gamePanel').style.display = 'block';
+    function showRandomHeroSelection() {
+  // 隐藏原来的武将列表
+  document.getElementById('heroList').style.display = 'none';
+  // 随机抽取3个武将
+  const allHeroKeys = Object.keys(heroes);
+  const shuffled = allHeroKeys.sort(() => 0.5 - Math.random());
+  const selectedKeys = shuffled.slice(0, 3);
+  const container = document.getElementById('randomHeroList');
+  container.innerHTML = '';
+  selectedKeys.forEach(key => {
+    const hero = heroes[key];
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'hero-card';
+    cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
+    cardDiv.onclick = () => selectHero(hero, key);
+    container.appendChild(cardDiv);
+  });
+  document.getElementById('randomHeroPanel').style.display = 'block';
+  function startGameFromFirebase(publicState) {
+  if (gameStarted) return;
+  gameStarted = true;
+  // 根据 mySide 获取自己的武将和对方的武将
+  const myHero = (mySide === 'player1') ? publicState.player1.hero : publicState.player2.hero;
+  const oppHero = (mySide === 'player1') ? publicState.player2.hero : publicState.player1.hero;
+  // 创建游戏实例（这里需要调整 Game 类的构造函数，接收两个武将）
+  myGame = new Game();
+  myGame.startGameWithHeroes(myHero, oppHero); // 需要实现此方法
+  // ... 其余 UI 初始化代码不变 ...
+}
+}
+
+async function selectHero(hero, heroKey) {
+  // 将选中的武将保存到 Firebase 公共状态
+  const roomRef = ref(db, `rooms/${currentRoomId}/public/${mySide}`);
+  await update(roomRef, { hero: hero, ready: true });
+  // 隐藏选择面板
+  document.getElementById('randomHeroPanel').style.display = 'none';
+  // 检查双方是否都准备好了
+  checkBothReady();
+}
 
     // 初始化游戏实例（用选中的武将，对方默认用基础武将）
     if (!myHero) myHero = heroes.weile_basic; // 默认
@@ -1297,25 +1393,6 @@
     syncGameState(); // 同步回合切换
     setTimeout(() => this.aiTurn(), 500);
   };
-
-  // 选将界面
-  function buildHeroSelector() {
-    const container = document.getElementById('heroList');
-    if (!container) return;
-    container.innerHTML = '';
-    for (let key in heroes) {
-      let hero = heroes[key];
-      let cardDiv = document.createElement('div');
-      cardDiv.className = 'hero-card';
-      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
-      cardDiv.onclick = () => {
-        myHero = hero;
-        alert(`已选择武将 ${hero.name}，请创建或加入房间`);
-      };
-      container.appendChild(cardDiv);
-    }
-  }
-
   window.onload = () => {
     buildHeroSelector();
     document.getElementById('restartBtn').onclick = () => {
