@@ -1102,58 +1102,33 @@
   let myGame = null; // 当前游戏实例
   let myHero = null; // 选中的武将
   let gameStarted = false;
-function joinRoom() {
-  update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
-    mySide = 'player2';
-    showRandomHeroSelection();
-    waitForOpponentReady();
-  });
-}
 // 注意：这里没有多余的 }，因为上面已经关闭了 Game 类的定义了。
-    function createRoom() {
-  set(roomRef, {
-    public: {
-      player1: { hero: null, ready: false }, // 新增 hero 和 ready
-      player2: null,
-      currentTurn: 'player1',
-      gameStarted: false
-    },
-    private: { }
-  }).then(() => {
-    mySide = 'player1';
-    // 显示随机武将选择面板
-    showRandomHeroSelection();
-    // 等待对方选将（监听对方 ready 状态）
-    waitForOpponentReady();
-  });
-}
-function joinRoom() {
-  update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
-    mySide = 'player2';
-    showRandomHeroSelection();
-    waitForOpponentReady();
-  });
-}
-  function waitForOpponentReady() {
-  const roomRef = ref(db, `rooms/${currentRoomId}/public`);
-  onValue(roomRef, (snapshot) => {
-    const pub = snapshot.val();
-    if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
-      // 双方都选好了，开始游戏
-      startGameFromFirebase(pub);
-    }
-  });
-}
+  function createRoom() {
+    const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+    currentRoomId = roomId;
+    document.getElementById('roomId').value = roomId;
+    const roomRef = ref(db, 'rooms/' + roomId);
+    set(roomRef, {
+      public: {
+        player1: { hero: null, ready: false },
+        player2: null,
+        currentTurn: 'player1',
+        gameStarted: false
+      },
+      private: {}
+    }).then(() => {
+      mySide = 'player1';
+      showRandomHeroSelection();
+      waitForOpponentReady();
+    }).catch(err => console.error(err));
+  }
+ function getRandomHeroes() {
+    const keys = Object.keys(heroes);
+    const shuffled = keys.sort(() => 0.5 - Math.random());
+    const selectedKeys = shuffled.slice(0, 3);
+    return selectedKeys.map(key => heroes[key]);
+  }
 
-function checkBothReady() {
-  const roomRef = ref(db, `rooms/${currentRoomId}/public`);
-  onValue(roomRef, (snapshot) => {
-    const pub = snapshot.val();
-    if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
-      startGameFromFirebase(pub);
-    }
-  }, { onlyOnce: true });
-}
   function joinRoom() {
     const roomId = document.getElementById('roomId').value.trim();
     if (!roomId) return alert('请输入房间号');
@@ -1162,12 +1137,10 @@ function checkBothReady() {
     onValue(roomRef, (snapshot) => {
       const room = snapshot.val();
       if (room && !room.public.player2) {
-        update(roomRef, {
-          'public.player2': { hp: 4, maxHp: 4, weapon: null, armor: null, horseAttack: null, horseDefense: null, markers: {}, pendingDiscard: 0, usedShaThisTurn: false },
-          'private.player2': { hand: [] }
-        }).then(() => {
+        update(roomRef, { 'public.player2': { hero: null, ready: false } }).then(() => {
           mySide = 'player2';
-          waitForOpponent();
+          showRandomHeroSelection();
+          waitForOpponentReady();
         }).catch(err => console.error(err));
       } else if (room && room.public.player2) {
         alert('房间已满');
@@ -1177,7 +1150,28 @@ function checkBothReady() {
     }, { onlyOnce: true });
   }
 
-  function waitForOpponent() {
+  // 页面加载时绑定按钮
+  window.onload = () => {
+    document.getElementById('createRoomBtn').onclick = createRoom;
+    document.getElementById('joinRoomBtn').onclick = joinRoom;
+    document.getElementById('restartBtn').onclick = () => {
+      document.getElementById('heroSelector').style.display = 'block';
+      document.getElementById('gamePanel').style.display = 'none';
+    };
+    // 如果原来有 buildHeroSelector 等，可以保留或注释掉
+  };
+</script>
+function checkBothReady() {
+  const roomRef = ref(db, `rooms/${currentRoomId}/public`);
+  onValue(roomRef, (snapshot) => {
+    const pub = snapshot.val();
+    if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
+      startGameFromFirebase(pub);
+    }
+  }, { onlyOnce: true });
+}
+  
+ function waitForOpponent() {
     const roomRef = ref(db, 'rooms/' + currentRoomId);
     onValue(roomRef, (snapshot) => {
       const room = snapshot.val();
@@ -1196,37 +1190,45 @@ function checkBothReady() {
     document.getElementById('heroSelector').style.display = 'none';
     document.getElementById('gamePanel').style.display = 'block';
     function showRandomHeroSelection() {
-  // 隐藏原来的武将列表
-  document.getElementById('heroList').style.display = 'none';
-  // 随机抽取3个武将
-  const allHeroKeys = Object.keys(heroes);
-  const shuffled = allHeroKeys.sort(() => 0.5 - Math.random());
-  const selectedKeys = shuffled.slice(0, 3);
-  const container = document.getElementById('randomHeroList');
-  container.innerHTML = '';
-  selectedKeys.forEach(key => {
-    const hero = heroes[key];
-    const cardDiv = document.createElement('div');
-    cardDiv.className = 'hero-card';
-    cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
-    cardDiv.onclick = () => selectHero(hero, key);
-    container.appendChild(cardDiv);
-  });
-  document.getElementById('randomHeroPanel').style.display = 'block';
-  function startGameFromFirebase(publicState) {
-  if (gameStarted) return;
-  gameStarted = true;
-  // 根据 mySide 获取自己的武将和对方的武将
-  const myHero = (mySide === 'player1') ? publicState.player1.hero : publicState.player2.hero;
-  const oppHero = (mySide === 'player1') ? publicState.player2.hero : publicState.player1.hero;
-  // 创建游戏实例（这里需要调整 Game 类的构造函数，接收两个武将）
-  myGame = new Game();
-  myGame.startGameWithHeroes(myHero, oppHero); // 需要实现此方法
-  // ... 其余 UI 初始化代码不变 ...
-}
-    }
+    const randomHeroes = getRandomHeroes();
+    const container = document.getElementById('randomHeroList');
+    container.innerHTML = '';
+    randomHeroes.forEach(hero => {
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'hero-card';
+      cardDiv.innerHTML = `<div class="hero-name">${hero.name}</div><div class="hero-hp">❤️ ${hero.maxHp}</div><div class="hero-skill">${hero.skillDesc.replace(/\n/g,'<br>')}</div>`;
+      cardDiv.onclick = () => selectHero(hero);
+      container.appendChild(cardDiv);
+    });
+    document.getElementById('randomHeroPanel').style.display = 'block';
+  }
+   function startGameFromFirebase(publicState) {
+    if (gameStarted) return;
+    gameStarted = true;
+    const myHero = (mySide === 'player1') ? publicState.player1.hero : publicState.player2.hero;
+    const oppHero = (mySide === 'player1') ? publicState.player2.hero : publicState.player1.hero;
+    myGame = new Game();
+    myGame.startGameWithHeroes(myHero, oppHero);
+    // 隐藏选将界面，显示游戏面板
+    document.getElementById('heroSelector').style.display = 'none';
+    document.getElementById('gamePanel').style.display = 'block';
+    // 绑定结束回合等 UI 事件
+    document.getElementById('endTurnBtn').onclick = () => myGame.endTurn();
+  }
 
-
+  async function selectHero(hero) {
+    const roomRef = ref(db, `rooms/${currentRoomId}/public/${mySide}`);
+    await update(roomRef, { hero: hero, ready: true });
+    document.getElementById('randomHeroPanel').style.display = 'none';
+    // 检查双方是否都准备好了
+    const publicRef = ref(db, `rooms/${currentRoomId}/public`);
+    onValue(publicRef, (snapshot) => {
+      const pub = snapshot.val();
+      if (pub && pub.player1 && pub.player2 && pub.player1.ready && pub.player2.ready) {
+        startGameFromFirebase(pub);
+      }
+    }, { onlyOnce: true });
+  }
 async function selectHero(hero, heroKey) {
   // 将选中的武将保存到 Firebase 公共状态
   const roomRef = ref(db, `rooms/${currentRoomId}/public/${mySide}`);
